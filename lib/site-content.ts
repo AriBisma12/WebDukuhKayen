@@ -3,7 +3,6 @@ import {
   documentationCategories as fallbackDocumentationCategories,
   documentationHighlights as fallbackDocumentationHighlights,
   documentationVideos as fallbackDocumentationVideos,
-  featuredServices as fallbackFeaturedServices,
   navigation as fallbackNavigation,
   profileOfficials as fallbackProfileOfficials,
   profileStats as fallbackProfileStats,
@@ -11,8 +10,8 @@ import {
   villageNews as fallbackVillageNews,
   villageStats as fallbackVillageStats,
   type DocumentationPost,
+  type DocumentationPhoto,
   type DocumentationVideo,
-  type FeaturedService,
   type NavigationLink,
   type NewsItem,
   type ProfileOfficial,
@@ -40,30 +39,12 @@ export const getNavigationLinks = cache(async (): Promise<NavigationLink[]> => {
   }
 
   const { data, error } = await supabase
-    .from("navigation_links")
+    .from("tautan_navigasi")
     .select("label, href")
-    .order("sort_order", { ascending: true });
+    .order("urutan_tampil", { ascending: true });
 
   if (error || !data?.length) {
     return fallbackNavigation;
-  }
-
-  return data;
-});
-
-export const getFeaturedServices = cache(async (): Promise<FeaturedService[]> => {
-  const supabase = createSupabaseServerClient();
-  if (!supabase) {
-    return fallbackFeaturedServices;
-  }
-
-  const { data, error } = await supabase
-    .from("featured_services")
-    .select("title, icon, href")
-    .order("sort_order", { ascending: true });
-
-  if (error || !data?.length) {
-    return fallbackFeaturedServices;
   }
 
   return data;
@@ -76,20 +57,20 @@ export const getVillageNews = cache(async (): Promise<NewsItem[]> => {
   }
 
   const { data, error } = await supabase
-    .from("village_news")
-    .select("category, title, excerpt, image_url, published_at")
-    .order("sort_order", { ascending: true });
+    .from("berita_desa")
+    .select("kategori, judul, ringkasan, url_gambar, tanggal_terbit")
+    .order("urutan_tampil", { ascending: true });
 
   if (error || !data?.length) {
     return fallbackVillageNews;
   }
 
   return data.map((item) => ({
-    category: item.category,
-    date: formatIndonesianDate(item.published_at),
-    title: item.title,
-    excerpt: item.excerpt,
-    image: item.image_url ?? "",
+    category: item.kategori,
+    date: formatIndonesianDate(item.tanggal_terbit),
+    title: item.judul,
+    excerpt: item.ringkasan,
+    image: item.url_gambar ?? "",
   }));
 });
 
@@ -100,9 +81,9 @@ export const getVillageStats = cache(async (): Promise<VillageStat[]> => {
   }
 
   const { data, error } = await supabase
-    .from("village_stats")
+    .from("statistik_desa")
     .select("label, value")
-    .order("sort_order", { ascending: true });
+    .order("urutan_tampil", { ascending: true });
 
   if (error || !data?.length) {
     return fallbackVillageStats;
@@ -112,12 +93,19 @@ export const getVillageStats = cache(async (): Promise<VillageStat[]> => {
 });
 
 type DocumentationPostRow = {
-  title: string;
-  excerpt: string;
-  image_url: string | null;
-  published_at: string | null;
-  is_featured: boolean;
-  category: { name: string } | null;
+  judul: string;
+  ringkasan: string;
+  url_gambar: string | null;
+  tanggal_terbit: string | null;
+  unggulan: boolean;
+  kategori: { nama: string } | null;
+  foto_dokumentasi:
+    | {
+        url_foto: string;
+        teks_alt: string | null;
+        urutan_tampil: number;
+      }[]
+    | null;
 };
 
 export const getDocumentationCategories = cache(async (): Promise<string[]> => {
@@ -127,15 +115,15 @@ export const getDocumentationCategories = cache(async (): Promise<string[]> => {
   }
 
   const { data, error } = await supabase
-    .from("documentation_categories")
-    .select("name")
-    .order("sort_order", { ascending: true });
+    .from("kategori_dokumentasi")
+    .select("nama")
+    .order("urutan_tampil", { ascending: true });
 
   if (error || !data?.length) {
     return fallbackDocumentationCategories;
   }
 
-  const categories = data.map((item) => item.name);
+  const categories = data.map((item) => item.nama);
   return categories.includes("Semua") ? categories : ["Semua", ...categories];
 });
 
@@ -147,25 +135,42 @@ export const getDocumentationPosts = cache(
     }
 
     const { data, error } = await supabase
-      .from("documentation_posts")
+      .from("posting_dokumentasi")
       .select(
-        "title, excerpt, image_url, published_at, is_featured, category:documentation_categories(name)",
+        "judul, ringkasan, url_gambar, tanggal_terbit, unggulan, kategori:kategori_dokumentasi(nama), foto_dokumentasi(url_foto, teks_alt, urutan_tampil)",
       )
-      .order("sort_order", { ascending: true })
+      .order("urutan_tampil", { ascending: true })
       .returns<DocumentationPostRow[]>();
 
     if (error || !data?.length) {
       return fallbackDocumentationHighlights;
     }
 
-    return data.map((item) => ({
-      category: item.category?.name ?? "Umum",
-      date: formatIndonesianDate(item.published_at),
-      title: item.title,
-      excerpt: item.excerpt,
-      image: item.image_url ?? "",
-      featured: item.is_featured,
-    }));
+    return data.map((item) => {
+      const photos = [...(item.foto_dokumentasi ?? [])]
+        .sort((a, b) => a.urutan_tampil - b.urutan_tampil)
+        .map<DocumentationPhoto>((photo) => ({
+          image: photo.url_foto,
+          alt: photo.teks_alt ?? item.judul,
+        }));
+
+      const coverImage = item.url_gambar ?? photos[0]?.image ?? "";
+
+      return {
+        category: item.kategori?.nama ?? "Umum",
+        date: formatIndonesianDate(item.tanggal_terbit),
+        title: item.judul,
+        excerpt: item.ringkasan,
+        image: coverImage,
+        featured: item.unggulan,
+        photos:
+          photos.length > 0
+            ? photos
+            : coverImage
+              ? [{ image: coverImage, alt: item.judul }]
+              : [],
+      };
+    });
   },
 );
 
@@ -177,18 +182,19 @@ export const getDocumentationVideos = cache(
     }
 
     const { data, error } = await supabase
-      .from("documentation_videos")
-      .select("title, duration, image_url")
-      .order("sort_order", { ascending: true });
+      .from("video_dokumentasi")
+      .select("judul, durasi, url_gambar, url_video")
+      .order("urutan_tampil", { ascending: true });
 
     if (error || !data?.length) {
       return fallbackDocumentationVideos;
     }
 
     return data.map((item) => ({
-      title: item.title,
-      duration: item.duration ?? "",
-      image: item.image_url ?? "",
+      title: item.judul,
+      duration: item.durasi ?? "",
+      image: item.url_gambar ?? "",
+      videoUrl: item.url_video ?? undefined,
     }));
   },
 );
@@ -200,9 +206,9 @@ export const getProfileStats = cache(async (): Promise<VillageStat[]> => {
   }
 
   const { data, error } = await supabase
-    .from("profile_stats")
+    .from("statistik_profil")
     .select("label, value")
-    .order("sort_order", { ascending: true });
+    .order("urutan_tampil", { ascending: true });
 
   if (error || !data?.length) {
     return fallbackProfileStats;
@@ -218,15 +224,18 @@ export const getProfileOfficials = cache(async (): Promise<ProfileOfficial[]> =>
   }
 
   const { data, error } = await supabase
-    .from("profile_officials")
-    .select("name, role")
-    .order("sort_order", { ascending: true });
+    .from("aparatur_desa")
+    .select("nama, peran")
+    .order("urutan_tampil", { ascending: true });
 
   if (error || !data?.length) {
     return fallbackProfileOfficials;
   }
 
-  return data;
+  return data.map((item) => ({
+    name: item.nama,
+    role: item.peran,
+  }));
 });
 
 export const getVillageBoundaries = cache(
@@ -237,14 +246,17 @@ export const getVillageBoundaries = cache(
     }
 
     const { data, error } = await supabase
-      .from("village_boundaries")
-      .select("direction, description")
-      .order("sort_order", { ascending: true });
+      .from("batas_wilayah_desa")
+      .select("arah, deskripsi")
+      .order("urutan_tampil", { ascending: true });
 
     if (error || !data?.length) {
       return fallbackVillageBoundaries;
     }
 
-    return data;
+    return data.map((item) => ({
+      direction: item.arah,
+      description: item.deskripsi,
+    }));
   },
 );

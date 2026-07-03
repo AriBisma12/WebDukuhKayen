@@ -3,27 +3,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { SiteFooter } from "./_components/site-footer";
 import { SiteHeader } from "./_components/site-header";
-import {
-  getFeaturedServices,
-  getVillageNews,
-  getVillageStats,
-} from "@/lib/site-content";
+import { getVillageNews, getVillageStats } from "@/lib/site-content";
 
 const missionPoints = [
   "Menghadirkan pelayanan publik yang transparan dan akuntabel.",
-  "Mengembangkan potensi alam dan UMKM desa secara berkelanjutan.",
+  "Mengembangkan potensi alam dan UMKM padukuhan secara berkelanjutan.",
   "Mempercepat digitalisasi layanan agar mudah diakses seluruh warga.",
 ];
 
 export const metadata: Metadata = {
-  title: "Beranda | Portal Desa Sejahtera",
+  title: "Beranda | Portal padukuhan Sejahtera",
   description:
-    "Halaman utama Portal Desa Sejahtera yang menampilkan layanan unggulan, visi misi, berita, dan statistik desa.",
+    "Halaman utama Portal padukuhan Sejahtera yang menampilkan layanan unggulan, visi misi, berita, dan statistik padukuhan.",
 };
 
 export default async function HomePage() {
-  const [featuredServices, villageNews, villageStats] = await Promise.all([
-    getFeaturedServices(),
+  const [villageNews, villageStats] = await Promise.all([
     getVillageNews(),
     getVillageStats(),
   ]);
@@ -36,7 +31,7 @@ export default async function HomePage() {
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
-            alt="Pemandangan sawah bertingkat desa"
+            alt="Pemandangan sawah bertingkat padukuhan"
             fill
             priority
             className="object-cover"
@@ -53,36 +48,22 @@ export default async function HomePage() {
                 Kearifan Lokal.
               </h1>
               <p className="mt-5 text-base leading-8 text-[#746954]">
-                Selamat datang di portal resmi Desa Sejahtera. Kami berkomitmen
+                Selamat datang di portal resmi padukuhan Sejahtera. Kami berkomitmen
                 untuk mewujudkan pelayanan publik yang transparan, akuntabel,
                 dan berbasis digital demi kesejahteraan seluruh warga.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/profil-desa" className="hero-primary-button">
-                  Profil Desa
+                <Link href="/profil-padukuhan" className="hero-primary-button">
+                  Profil padukuhan
                 </Link>
-                <Link href="/profil-desa" className="hero-secondary-button">
-                  Jelajahi Desa
+                <Link href="/profil-padukuhan" className="hero-secondary-button">
+                  Jelajahi padukuhan
                 </Link>
               </div>
             </div>
           </div>
 
-          <div className="relative z-10 -mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {featuredServices.map((service) => (
-              <Link
-                key={service.title}
-                href={service.href}
-                className="rounded-2xl border border-[#ddcfbb] bg-[#fbf8f2] p-5 shadow-[0_20px_40px_-34px_rgba(48,34,11,0.9)] transition hover:-translate-y-1"
-              >
-                <span className="service-icon">{service.icon}</span>
-                <p className="mt-4 text-base font-medium text-[#6f624d]">
-                  {service.title}
-                </p>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -103,7 +84,7 @@ export default async function HomePage() {
                   Visi Kami
                 </h3>
                 <p className="mt-2 leading-7 text-[#7a6e5a]">
-                  Mewujudkan Desa Sejahtera yang mandiri, agamis, dan
+                  Mewujudkan padukuhan Sejahtera yang mandiri, agamis, dan
                   sejahtera melalui penguatan ekonomi kerakyatan dan tata kelola
                   pemerintahan yang bersih.
                 </p>
@@ -133,7 +114,7 @@ export default async function HomePage() {
           <div className="overflow-hidden rounded-[2rem] border border-[#dccfb8] bg-white p-3 shadow-[0_28px_60px_-36px_rgba(50,34,11,0.8)]">
             <Image
               src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80"
-              alt="Pertemuan warga di balai desa"
+              alt="Pertemuan warga di balai padukuhan"
               width={1200}
               height={900}
               className="h-[520px] w-full rounded-[1.4rem] object-cover"
@@ -141,7 +122,7 @@ export default async function HomePage() {
           </div>
           <div className="absolute bottom-5 left-5 rounded-2xl bg-[#f4c94b] px-5 py-4 shadow-[0_18px_35px_-25px_rgba(122,91,10,0.9)]">
             <p className="font-heading text-sm font-bold text-[#5e4300]">100%</p>
-            <p className="text-xs text-[#6f5311]">Transparansi Dana Desa</p>
+            <p className="text-xs text-[#6f5311]">Transparansi Dana padukuhan</p>
           </div>
         </div>
       </section>
@@ -150,10 +131,10 @@ export default async function HomePage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <h2 className="font-heading text-4xl font-bold text-[#7a5b0a]">
-              Kabar Desa Terbaru
+              Kabar padukuhan Terbaru
             </h2>
             <p className="mt-2 text-[#7b6e5c]">
-              Informasi terkini mengenai kegiatan dan pengumuman desa.
+              Informasi terkini mengenai kegiatan dan pengumuman padukuhan.
             </p>
           </div>
           <Link href="/dokumentasi-kegiatan" className="text-sm font-semibold text-[#7a5b0a]">
@@ -202,10 +183,10 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <div className="text-center">
             <h2 className="font-heading text-4xl font-bold">
-              Statistik Desa Tahun 2024
+              Statistik padukuhan Tahun 2024
             </h2>
             <p className="mt-3 text-white/82">
-              Data kependudukan dan geografis Desa Sejahtera secara real-time.
+              Data kependudukan dan geografis padukuhan Sejahtera secara real-time.
             </p>
           </div>
 
@@ -231,15 +212,15 @@ export default async function HomePage() {
             Butuh Informasi Lebih Lanjut?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl leading-8 text-[#7b6e5c]">
-            Kami siap melayani Anda. Hubungi kantor desa atau akses pusat
+            Kami siap melayani Anda. Hubungi kantor padukuhan atau akses pusat
             bantuan kami untuk pertanyaan seputar layanan publik dan
             administrasi.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/profil-desa#kontak-desa" className="hero-primary-button">
+            <Link href="/profil-padukuhan#kontak-padukuhan" className="hero-primary-button">
               Hubungi Kami Sekarang
             </Link>
-            <Link href="/profil-desa" className="hero-secondary-button">
+            <Link href="/profil-padukuhan" className="hero-secondary-button">
               Pusat Bantuan
             </Link>
           </div>

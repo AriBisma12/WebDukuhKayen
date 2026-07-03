@@ -8,6 +8,7 @@ import {
   getDocumentationPosts,
   getDocumentationVideos,
 } from "@/lib/site-content";
+import { DocumentationPostsSection } from "./documentation-posts-section";
 
 export const metadata: Metadata = {
   title: "Dokumentasi Kegiatan | Portal Desa Sejahtera",
@@ -22,7 +23,6 @@ export default async function DokumentasiKegiatanPage() {
       getDocumentationPosts(),
       getDocumentationVideos(),
     ]);
-  const [featuredPost, sidePost, ...bottomPosts] = documentationHighlights;
 
   return (
     <main className="min-h-screen bg-[#f6f3ee] text-[#3e3323]">
@@ -70,91 +70,7 @@ export default async function DokumentasiKegiatanPage() {
           ))}
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.68fr]">
-          <article className="overflow-hidden rounded-[1.75rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]">
-            <div className="relative h-[300px] md:h-[360px]">
-              <Image
-                src={featuredPost.image}
-                alt={featuredPost.title}
-                fill
-                className="object-cover"
-              />
-              <span className="absolute left-4 top-4 rounded-full bg-[#f0cc5a] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#684e08]">
-                {featuredPost.category}
-              </span>
-            </div>
-            <div className="p-6 md:p-7">
-              <p className="text-xs uppercase tracking-[0.16em] text-[#af9d80]">
-                {featuredPost.date}
-              </p>
-              <h2 className="mt-3 font-heading text-3xl font-bold text-[#47361a]">
-                {featuredPost.title}
-              </h2>
-              <p className="mt-4 max-w-3xl leading-8 text-[#7a6e5a]">
-                {featuredPost.excerpt}
-              </p>
-              <Link
-                href="#"
-                className="mt-6 inline-flex text-sm font-semibold text-[#7a5b0a]"
-              >
-                Baca Selengkapnya {"->"}
-              </Link>
-            </div>
-          </article>
-
-          <article className="overflow-hidden rounded-[1.75rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]">
-            <div className="relative h-[300px]">
-              <Image
-                src={sidePost.image}
-                alt={sidePost.title}
-                fill
-                className="object-cover"
-              />
-              <span className="absolute left-4 top-4 rounded-full bg-[#f0cc5a] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#684e08]">
-                {sidePost.category}
-              </span>
-            </div>
-            <div className="p-6">
-              <p className="text-xs uppercase tracking-[0.16em] text-[#af9d80]">
-                {sidePost.date}
-              </p>
-              <h3 className="mt-3 font-heading text-2xl font-bold text-[#47361a]">
-                {sidePost.title}
-              </h3>
-              <p className="mt-4 leading-8 text-[#7a6e5a]">{sidePost.excerpt}</p>
-            </div>
-          </article>
-        </div>
-
-        <div className="mt-6 grid gap-6 lg:grid-cols-[0.62fr_0.62fr_0.76fr]">
-          {bottomPosts.map((post) => (
-            <article
-              key={post.title}
-              className="overflow-hidden rounded-[1.65rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
-            >
-              <div className="relative h-[220px]">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  className="object-cover"
-                />
-                <span className="absolute left-4 top-4 rounded-full bg-[#f0cc5a] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[#684e08]">
-                  {post.category}
-                </span>
-              </div>
-              <div className="p-6">
-                <p className="text-xs uppercase tracking-[0.16em] text-[#af9d80]">
-                  {post.date}
-                </p>
-                <h3 className="mt-3 font-heading text-2xl font-bold text-[#47361a]">
-                  {post.title}
-                </h3>
-                <p className="mt-4 leading-8 text-[#7a6e5a]">{post.excerpt}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        <DocumentationPostsSection posts={documentationHighlights} />
       </section>
 
       <section className="bg-[#efede8] py-16">
@@ -176,9 +92,14 @@ export default async function DokumentasiKegiatanPage() {
 
           <div className="mt-10 grid gap-6 md:grid-cols-2">
             {documentationVideos.map((video) => (
-              <article
+              <a
                 key={video.title}
-                className="group overflow-hidden rounded-[1.5rem] border border-[#d7ccb9] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
+                href={video.videoUrl || "#"}
+                target={video.videoUrl ? "_blank" : undefined}
+                rel={video.videoUrl ? "noreferrer" : undefined}
+                className={`group block overflow-hidden rounded-[1.5rem] border border-[#d7ccb9] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)] ${
+                  video.videoUrl ? "" : "pointer-events-none opacity-80"
+                }`}
               >
                 <div className="relative h-[280px]">
                   <Image
@@ -202,7 +123,7 @@ export default async function DokumentasiKegiatanPage() {
                     </p>
                   </div>
                 </div>
-              </article>
+              </a>
             ))}
           </div>
         </div>

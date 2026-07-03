@@ -1,30 +1,23 @@
 begin;
 
-delete from public.documentation_posts;
-delete from public.documentation_categories;
-delete from public.documentation_videos;
-delete from public.village_news;
-delete from public.featured_services;
-delete from public.navigation_links;
-delete from public.village_stats;
-delete from public.profile_stats;
-delete from public.profile_officials;
-delete from public.village_boundaries;
+delete from public.posting_dokumentasi;
+delete from public.kategori_dokumentasi;
+delete from public.foto_dokumentasi;
+delete from public.video_dokumentasi;
+delete from public.berita_desa;
+delete from public.tautan_navigasi;
+delete from public.statistik_desa;
+delete from public.statistik_profil;
+delete from public.aparatur_desa;
+delete from public.batas_wilayah_desa;
 
-insert into public.navigation_links (label, href, sort_order)
+insert into public.tautan_navigasi (label, href, urutan_tampil)
 values
   ('Beranda', '/', 1),
   ('Profil Desa', '/profil-desa', 2),
   ('Dokumentasi Kegiatan', '/dokumentasi-kegiatan', 3);
 
-insert into public.featured_services (title, icon, href, sort_order)
-values
-  ('Administrasi', 'ADM', '/profil-desa', 1),
-  ('Bantuan Sosial', 'SOS', '/profil-desa', 2),
-  ('UMKM Desa', 'UMK', '/profil-desa', 3),
-  ('Lapor Kados', 'LPR', '/dokumentasi-kegiatan', 4);
-
-insert into public.village_news (category, title, excerpt, image_url, published_at, sort_order)
+insert into public.berita_desa (kategori, judul, ringkasan, url_gambar, tanggal_terbit, urutan_tampil)
 values
   (
     'Berita',
@@ -51,31 +44,31 @@ values
     3
   );
 
-insert into public.village_stats (label, value, sort_order)
+insert into public.statistik_desa (label, value, urutan_tampil)
 values
   ('Total Penduduk', '4.520', 1),
   ('Luas Wilayah', '125', 2),
   ('Kepala Keluarga', '1.280', 3),
   ('Sektor Pertanian', '85%', 4);
 
-insert into public.documentation_categories (name, sort_order)
+insert into public.kategori_dokumentasi (nama, urutan_tampil)
 values
   ('Budaya', 1),
   ('Infrastruktur', 2),
   ('Sosial', 3);
 
-insert into public.documentation_posts (
-  category_id,
-  title,
-  excerpt,
-  image_url,
-  published_at,
-  is_featured,
-  sort_order
+insert into public.posting_dokumentasi (
+  kategori_id,
+  judul,
+  ringkasan,
+  url_gambar,
+  tanggal_terbit,
+  unggulan,
+  urutan_tampil
 )
 values
   (
-    (select id from public.documentation_categories where name = 'Sosial'),
+    (select id from public.kategori_dokumentasi where nama = 'Sosial'),
     'Gotong Royong Kebersihan Lingkungan',
     'Kegiatan rutin bulanan warga Desa Sejahtera dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.',
     'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
@@ -84,7 +77,7 @@ values
     1
   ),
   (
-    (select id from public.documentation_categories where name = 'Budaya'),
+    (select id from public.kategori_dokumentasi where nama = 'Budaya'),
     'Pesta Rakyat Kemerdekaan RI ke-78',
     'Perayaan meriah dengan berbagai lomba tradisional dan pementasan seni budaya dari seluruh dusun di desa.',
     'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80',
@@ -93,7 +86,7 @@ values
     2
   ),
   (
-    (select id from public.documentation_categories where name = 'Infrastruktur'),
+    (select id from public.kategori_dokumentasi where nama = 'Infrastruktur'),
     'Pembangunan Irigasi Sawah Dusun III',
     'Peningkatan sistem pengairan sawah sepanjang 2 km untuk mendukung produktivitas petani padi lokal.',
     'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
@@ -102,7 +95,7 @@ values
     3
   ),
   (
-    (select id from public.documentation_categories where name = 'Sosial'),
+    (select id from public.kategori_dokumentasi where nama = 'Sosial'),
     'Musyawarah Perencanaan Pembangunan',
     'Diskusi terbuka antara perangkat desa dan tokoh masyarakat dalam menentukan arah pembangunan desa tahun anggaran 2024.',
     'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80',
@@ -111,7 +104,58 @@ values
     4
   );
 
-insert into public.documentation_videos (title, duration, image_url, sort_order)
+insert into public.foto_dokumentasi (posting_id, url_foto, teks_alt, urutan_tampil)
+values
+  (
+    (select id from public.posting_dokumentasi where judul = 'Gotong Royong Kebersihan Lingkungan'),
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+    'Warga desa bergotong royong di area terbuka',
+    1
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Gotong Royong Kebersihan Lingkungan'),
+    'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80',
+    'Suasana musyawarah warga setelah kegiatan bersama',
+    2
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Pesta Rakyat Kemerdekaan RI ke-78'),
+    'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80',
+    'Mikrofon panggung untuk acara budaya desa',
+    1
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Pesta Rakyat Kemerdekaan RI ke-78'),
+    'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
+    'Keramaian warga dalam festival desa',
+    2
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Pembangunan Irigasi Sawah Dusun III'),
+    'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
+    'Area persawahan dengan saluran irigasi baru',
+    1
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Pembangunan Irigasi Sawah Dusun III'),
+    'https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80',
+    'Jalur pembangunan infrastruktur desa',
+    2
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Musyawarah Perencanaan Pembangunan'),
+    'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80',
+    'Pertemuan warga dan perangkat desa',
+    1
+  ),
+  (
+    (select id from public.posting_dokumentasi where judul = 'Musyawarah Perencanaan Pembangunan'),
+    'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80',
+    'Forum diskusi pembangunan di balai desa',
+    2
+  );
+
+insert into public.video_dokumentasi (judul, durasi, url_gambar, urutan_tampil)
 values
   (
     'Rangkuman Festival Desa Sejahtera 2023',
@@ -126,20 +170,20 @@ values
     2
   );
 
-insert into public.profile_stats (label, value, sort_order)
+insert into public.statistik_profil (label, value, urutan_tampil)
 values
   ('Tahun Berdiri', '1924', 1),
   ('Jumlah Penduduk', '12K+', 2),
   ('Dusun Aktif', '7', 3);
 
-insert into public.profile_officials (name, role, sort_order)
+insert into public.aparatur_desa (nama, peran, urutan_tampil)
 values
   ('H. Ahmad Fauzi', 'Kepala Desa', 1),
   ('Siti Aminah', 'Sekretaris Desa', 2),
   ('Budi Santoso', 'Kaur Keuangan', 3),
   ('Irfan Hakim', 'Kaur Pembangunan', 4);
 
-insert into public.village_boundaries (direction, description, sort_order)
+insert into public.batas_wilayah_desa (arah, deskripsi, urutan_tampil)
 values
   (
     'Batas Utara',

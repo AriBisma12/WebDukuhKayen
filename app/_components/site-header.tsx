@@ -12,7 +12,7 @@ export async function SiteHeader({ currentPath = "/" }: SiteHeaderProps) {
     <header className="sticky top-0 z-50 border-b border-[#d9d0be] bg-[#f7f3ea]/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 md:px-8">
         <Link href="/" className="font-heading text-lg font-bold text-[#3f2d11]">
-          Desa Sejahtera
+          Padukuhan Sejahtera
         </Link>
 
         <nav className="hidden items-center gap-7 text-sm text-[#7b6b55] md:flex">
@@ -34,7 +34,7 @@ export async function SiteHeader({ currentPath = "/" }: SiteHeaderProps) {
         </nav>
 
         <Link
-          href="/profil-desa#kontak-desa"
+          href="/profil-Padukuhan#kontak-Padukuhan"
           className="rounded-xl bg-[#7a5b0a] px-4 py-2 text-xs font-semibold text-white shadow-[0_10px_25px_-18px_rgba(122,91,10,0.9)] transition hover:bg-[#614808]"
         >
           Kontak Kami

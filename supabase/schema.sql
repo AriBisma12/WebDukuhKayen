@@ -1,102 +1,102 @@
 create extension if not exists pgcrypto;
 
-create table if not exists public.navigation_links (
+create table if not exists public.tautan_navigasi (
   id uuid primary key default gen_random_uuid(),
   label text not null,
   href text not null unique,
-  sort_order integer not null default 0,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.featured_services (
+create table if not exists public.berita_desa (
   id uuid primary key default gen_random_uuid(),
-  title text not null,
-  icon text not null,
-  href text not null,
-  sort_order integer not null default 0,
+  kategori text not null,
+  judul text not null,
+  ringkasan text not null,
+  url_gambar text,
+  tanggal_terbit date,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.village_news (
-  id uuid primary key default gen_random_uuid(),
-  category text not null,
-  title text not null,
-  excerpt text not null,
-  image_url text,
-  published_at date,
-  sort_order integer not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.village_stats (
+create table if not exists public.statistik_desa (
   id uuid primary key default gen_random_uuid(),
   label text not null,
   value text not null,
-  sort_order integer not null default 0,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.documentation_categories (
+create table if not exists public.kategori_dokumentasi (
   id uuid primary key default gen_random_uuid(),
-  name text not null unique,
-  sort_order integer not null default 0,
+  nama text not null unique,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.documentation_posts (
+create table if not exists public.posting_dokumentasi (
   id uuid primary key default gen_random_uuid(),
-  category_id uuid references public.documentation_categories(id) on delete set null,
-  title text not null,
-  excerpt text not null,
-  image_url text,
-  published_at date,
-  is_featured boolean not null default false,
-  sort_order integer not null default 0,
+  kategori_id uuid references public.kategori_dokumentasi(id) on delete set null,
+  judul text not null,
+  ringkasan text not null,
+  url_gambar text,
+  tanggal_terbit date,
+  unggulan boolean not null default false,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.documentation_videos (
+create table if not exists public.foto_dokumentasi (
   id uuid primary key default gen_random_uuid(),
-  title text not null,
-  duration text,
-  image_url text,
-  video_url text,
-  sort_order integer not null default 0,
+  posting_id uuid not null references public.posting_dokumentasi(id) on delete cascade,
+  url_foto text not null,
+  teks_alt text,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.profile_stats (
+create table if not exists public.video_dokumentasi (
+  id uuid primary key default gen_random_uuid(),
+  judul text not null,
+  durasi text,
+  url_gambar text,
+  url_video text,
+  urutan_tampil integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.statistik_profil (
   id uuid primary key default gen_random_uuid(),
   label text not null,
   value text not null,
-  sort_order integer not null default 0,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.profile_officials (
+create table if not exists public.aparatur_desa (
   id uuid primary key default gen_random_uuid(),
-  name text not null,
-  role text not null,
-  photo_url text,
+  nama text not null,
+  peran text not null,
+  url_foto text,
   bio text,
-  sort_order integer not null default 0,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create table if not exists public.village_boundaries (
+create table if not exists public.batas_wilayah_desa (
   id uuid primary key default gen_random_uuid(),
-  direction text not null,
-  description text not null,
-  sort_order integer not null default 0,
+  arah text not null,
+  deskripsi text not null,
+  urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -111,123 +111,123 @@ begin
 end;
 $$;
 
-drop trigger if exists set_navigation_links_updated_at on public.navigation_links;
-create trigger set_navigation_links_updated_at
-before update on public.navigation_links
+drop trigger if exists set_tautan_navigasi_updated_at on public.tautan_navigasi;
+create trigger set_tautan_navigasi_updated_at
+before update on public.tautan_navigasi
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_featured_services_updated_at on public.featured_services;
-create trigger set_featured_services_updated_at
-before update on public.featured_services
+drop trigger if exists set_berita_desa_updated_at on public.berita_desa;
+create trigger set_berita_desa_updated_at
+before update on public.berita_desa
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_village_news_updated_at on public.village_news;
-create trigger set_village_news_updated_at
-before update on public.village_news
+drop trigger if exists set_statistik_desa_updated_at on public.statistik_desa;
+create trigger set_statistik_desa_updated_at
+before update on public.statistik_desa
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_village_stats_updated_at on public.village_stats;
-create trigger set_village_stats_updated_at
-before update on public.village_stats
+drop trigger if exists set_kategori_dokumentasi_updated_at on public.kategori_dokumentasi;
+create trigger set_kategori_dokumentasi_updated_at
+before update on public.kategori_dokumentasi
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_documentation_categories_updated_at on public.documentation_categories;
-create trigger set_documentation_categories_updated_at
-before update on public.documentation_categories
+drop trigger if exists set_posting_dokumentasi_updated_at on public.posting_dokumentasi;
+create trigger set_posting_dokumentasi_updated_at
+before update on public.posting_dokumentasi
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_documentation_posts_updated_at on public.documentation_posts;
-create trigger set_documentation_posts_updated_at
-before update on public.documentation_posts
+drop trigger if exists set_foto_dokumentasi_updated_at on public.foto_dokumentasi;
+create trigger set_foto_dokumentasi_updated_at
+before update on public.foto_dokumentasi
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_documentation_videos_updated_at on public.documentation_videos;
-create trigger set_documentation_videos_updated_at
-before update on public.documentation_videos
+drop trigger if exists set_video_dokumentasi_updated_at on public.video_dokumentasi;
+create trigger set_video_dokumentasi_updated_at
+before update on public.video_dokumentasi
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_profile_stats_updated_at on public.profile_stats;
-create trigger set_profile_stats_updated_at
-before update on public.profile_stats
+drop trigger if exists set_statistik_profil_updated_at on public.statistik_profil;
+create trigger set_statistik_profil_updated_at
+before update on public.statistik_profil
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_profile_officials_updated_at on public.profile_officials;
-create trigger set_profile_officials_updated_at
-before update on public.profile_officials
+drop trigger if exists set_aparatur_desa_updated_at on public.aparatur_desa;
+create trigger set_aparatur_desa_updated_at
+before update on public.aparatur_desa
 for each row execute function public.set_updated_at();
 
-drop trigger if exists set_village_boundaries_updated_at on public.village_boundaries;
-create trigger set_village_boundaries_updated_at
-before update on public.village_boundaries
+drop trigger if exists set_batas_wilayah_desa_updated_at on public.batas_wilayah_desa;
+create trigger set_batas_wilayah_desa_updated_at
+before update on public.batas_wilayah_desa
 for each row execute function public.set_updated_at();
 
-alter table public.navigation_links enable row level security;
-alter table public.featured_services enable row level security;
-alter table public.village_news enable row level security;
-alter table public.village_stats enable row level security;
-alter table public.documentation_categories enable row level security;
-alter table public.documentation_posts enable row level security;
-alter table public.documentation_videos enable row level security;
-alter table public.profile_stats enable row level security;
-alter table public.profile_officials enable row level security;
-alter table public.village_boundaries enable row level security;
+alter table public.tautan_navigasi enable row level security;
+alter table public.berita_desa enable row level security;
+alter table public.statistik_desa enable row level security;
+alter table public.kategori_dokumentasi enable row level security;
+alter table public.posting_dokumentasi enable row level security;
+alter table public.foto_dokumentasi enable row level security;
+alter table public.video_dokumentasi enable row level security;
+alter table public.statistik_profil enable row level security;
+alter table public.aparatur_desa enable row level security;
+alter table public.batas_wilayah_desa enable row level security;
 
-drop policy if exists "Public read navigation_links" on public.navigation_links;
-create policy "Public read navigation_links"
-on public.navigation_links for select
+drop policy if exists "Public read tautan_navigasi" on public.tautan_navigasi;
+create policy "Public read tautan_navigasi"
+on public.tautan_navigasi for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read featured_services" on public.featured_services;
-create policy "Public read featured_services"
-on public.featured_services for select
+drop policy if exists "Public read berita_desa" on public.berita_desa;
+create policy "Public read berita_desa"
+on public.berita_desa for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read village_news" on public.village_news;
-create policy "Public read village_news"
-on public.village_news for select
+drop policy if exists "Public read statistik_desa" on public.statistik_desa;
+create policy "Public read statistik_desa"
+on public.statistik_desa for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read village_stats" on public.village_stats;
-create policy "Public read village_stats"
-on public.village_stats for select
+drop policy if exists "Public read kategori_dokumentasi" on public.kategori_dokumentasi;
+create policy "Public read kategori_dokumentasi"
+on public.kategori_dokumentasi for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read documentation_categories" on public.documentation_categories;
-create policy "Public read documentation_categories"
-on public.documentation_categories for select
+drop policy if exists "Public read posting_dokumentasi" on public.posting_dokumentasi;
+create policy "Public read posting_dokumentasi"
+on public.posting_dokumentasi for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read documentation_posts" on public.documentation_posts;
-create policy "Public read documentation_posts"
-on public.documentation_posts for select
+drop policy if exists "Public read foto_dokumentasi" on public.foto_dokumentasi;
+create policy "Public read foto_dokumentasi"
+on public.foto_dokumentasi for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read documentation_videos" on public.documentation_videos;
-create policy "Public read documentation_videos"
-on public.documentation_videos for select
+drop policy if exists "Public read video_dokumentasi" on public.video_dokumentasi;
+create policy "Public read video_dokumentasi"
+on public.video_dokumentasi for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read profile_stats" on public.profile_stats;
-create policy "Public read profile_stats"
-on public.profile_stats for select
+drop policy if exists "Public read statistik_profil" on public.statistik_profil;
+create policy "Public read statistik_profil"
+on public.statistik_profil for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read profile_officials" on public.profile_officials;
-create policy "Public read profile_officials"
-on public.profile_officials for select
+drop policy if exists "Public read aparatur_desa" on public.aparatur_desa;
+create policy "Public read aparatur_desa"
+on public.aparatur_desa for select
 to anon, authenticated
 using (true);
 
-drop policy if exists "Public read village_boundaries" on public.village_boundaries;
-create policy "Public read village_boundaries"
-on public.village_boundaries for select
+drop policy if exists "Public read batas_wilayah_desa" on public.batas_wilayah_desa;
+create policy "Public read batas_wilayah_desa"
+on public.batas_wilayah_desa for select
 to anon, authenticated
 using (true);

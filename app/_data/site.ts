@@ -3,12 +3,6 @@ export type NavigationLink = {
   label: string;
 };
 
-export type FeaturedService = {
-  title: string;
-  icon: string;
-  href: string;
-};
-
 export type NewsItem = {
   category: string;
   date: string;
@@ -29,12 +23,19 @@ export type DocumentationPost = {
   excerpt: string;
   image: string;
   featured?: boolean;
+  photos?: DocumentationPhoto[];
 };
 
 export type DocumentationVideo = {
   title: string;
   duration: string;
   image: string;
+  videoUrl?: string;
+};
+
+export type DocumentationPhoto = {
+  image: string;
+  alt: string;
 };
 
 export type ProfileOfficial = {
@@ -52,13 +53,6 @@ export const navigation = [
   { href: "/profil-desa", label: "Profil Desa" },
   { href: "/dokumentasi-kegiatan", label: "Dokumentasi Kegiatan" },
 ] satisfies NavigationLink[];
-
-export const featuredServices = [
-  { title: "Administrasi", icon: "ADM", href: "/profil-desa" },
-  { title: "Bantuan Sosial", icon: "SOS", href: "/profil-desa" },
-  { title: "UMKM Desa", icon: "UMK", href: "/profil-desa" },
-  { title: "Lapor Kados", icon: "LPR", href: "/dokumentasi-kegiatan" },
-] satisfies FeaturedService[];
 
 export const villageNews = [
   {
@@ -114,6 +108,18 @@ export const documentationHighlights = [
     image:
       "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
     featured: true,
+    photos: [
+      {
+        image:
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
+        alt: "Warga desa bergotong royong di area terbuka",
+      },
+      {
+        image:
+          "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
+        alt: "Suasana musyawarah warga setelah kegiatan bersama",
+      },
+    ],
   },
   {
     category: "Budaya",
@@ -123,6 +129,18 @@ export const documentationHighlights = [
       "Perayaan meriah dengan berbagai lomba tradisional dan pementasan seni budaya dari seluruh dusun di desa.",
     image:
       "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80",
+    photos: [
+      {
+        image:
+          "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80",
+        alt: "Mikrofon panggung untuk acara budaya desa",
+      },
+      {
+        image:
+          "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+        alt: "Keramaian warga dalam festival desa",
+      },
+    ],
   },
   {
     category: "Infrastruktur",
@@ -132,6 +150,18 @@ export const documentationHighlights = [
       "Peningkatan sistem pengairan sawah sepanjang 2 km untuk mendukung produktivitas petani padi lokal.",
     image:
       "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
+    photos: [
+      {
+        image:
+          "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
+        alt: "Area persawahan dengan saluran irigasi baru",
+      },
+      {
+        image:
+          "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80",
+        alt: "Jalur pembangunan infrastruktur desa",
+      },
+    ],
   },
   {
     category: "Sosial",
@@ -141,6 +171,18 @@ export const documentationHighlights = [
       "Diskusi terbuka antara perangkat desa dan tokoh masyarakat dalam menentukan arah pembangunan desa tahun anggaran 2024.",
     image:
       "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
+    photos: [
+      {
+        image:
+          "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
+        alt: "Pertemuan warga dan perangkat desa",
+      },
+      {
+        image:
+          "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80",
+        alt: "Forum diskusi pembangunan di balai desa",
+      },
+    ],
   },
 ] satisfies DocumentationPost[];
 
@@ -150,12 +192,14 @@ export const documentationVideos = [
     duration: "05:42",
     image:
       "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+    videoUrl: "#",
   },
   {
     title: "Profil Desa Sejahtera: Menuju Desa Mandiri",
     duration: "12:15",
     image:
       "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
+    videoUrl: "https://youtu.be/eKLrQ2ztNhA?si=IwLO",
   },
 ] satisfies DocumentationVideo[];
 
