@@ -54,10 +54,10 @@ export default async function HomePage() {
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/profil-padukuhan" className="hero-primary-button">
+                <Link href="/profil-desa" className="hero-primary-button">
                   Profil padukuhan
                 </Link>
-                <Link href="/profil-padukuhan" className="hero-secondary-button">
+                <Link href="/profil-desa" className="hero-secondary-button">
                   Jelajahi padukuhan
                 </Link>
               </div>
@@ -137,7 +137,7 @@ export default async function HomePage() {
               Informasi terkini mengenai kegiatan dan pengumuman padukuhan.
             </p>
           </div>
-          <Link href="/dokumentasi-kegiatan" className="text-sm font-semibold text-[#7a5b0a]">
+          <Link href="/kabar-padukuhan" className="text-sm font-semibold text-[#7a5b0a]">
             Lihat Semua Berita {"->"}
           </Link>
         </div>
@@ -168,7 +168,7 @@ export default async function HomePage() {
                 </h3>
                 <p className="mt-3 leading-7 text-[#7a6e5a]">{item.excerpt}</p>
                 <Link
-                  href="/dokumentasi-kegiatan"
+                  href="/kabar-padukuhan"
                   className="mt-5 inline-flex text-sm font-semibold text-[#7a5b0a]"
                 >
                   Baca Selengkapnya {"->"}
@@ -217,10 +217,10 @@ export default async function HomePage() {
             administrasi.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/profil-padukuhan#kontak-padukuhan" className="hero-primary-button">
+            <Link href="/profil-desa#kontak-padukuhan" className="hero-primary-button">
               Hubungi Kami Sekarang
             </Link>
-            <Link href="/profil-padukuhan" className="hero-secondary-button">
+            <Link href="/profil-desa" className="hero-secondary-button">
               Pusat Bantuan
             </Link>
           </div>

@@ -6,7 +6,7 @@ export async function SiteFooter() {
 
   return (
     <footer
-      id="kontak-Padukuhan"
+      id="kontak-padukuhan"
       className="mt-16 border-t border-[#ddd3c2] bg-[#ece8df] text-[#6d624f]"
     >
       <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3 md:px-8">

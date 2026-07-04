@@ -9,9 +9,9 @@ import {
 } from "@/lib/site-content";
 
 export const metadata: Metadata = {
-  title: "Profil Desa | Portal Desa Sejahtera",
+  title: "Profil Padukuhan | Portal Padukuhan Sejahtera",
   description:
-    "Informasi profil Desa Sejahtera mencakup sejarah desa, struktur organisasi, statistik, dan gambaran wilayah.",
+    "Informasi profil Padukuhan Sejahtera mencakup sejarah padukuhan, struktur organisasi, statistik, dan gambaran wilayah.",
 };
 
 export default async function ProfilDesaPage() {
@@ -30,7 +30,7 @@ export default async function ProfilDesaPage() {
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
-            alt="Panorama desa dan perbukitan"
+            alt="Panorama padukuhan dan perbukitan"
             fill
             priority
             className="object-cover"
@@ -44,11 +44,11 @@ export default async function ProfilDesaPage() {
               Profil Utama
             </span>
             <h1 className="mt-5 font-heading text-4xl font-extrabold text-white md:text-6xl">
-              Pusat Pelayanan Masyarakat Desa Sejahtera
+              Pusat Pelayanan Masyarakat Padukuhan Sejahtera
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
               Wujud transparansi dan modernisasi pelayanan warga yang tetap
-              berakar pada gotong royong, budaya, dan kekuatan komunitas desa.
+              berakar pada gotong royong, budaya, dan kekuatan komunitas padukuhan.
             </p>
           </div>
         </div>
@@ -57,19 +57,19 @@ export default async function ProfilDesaPage() {
       <section className="mx-auto grid max-w-7xl gap-14 px-6 py-20 md:px-8 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-6">
           <div>
-            <p className="section-kicker">Sejarah Desa</p>
+            <p className="section-kicker">Sejarah Padukuhan</p>
             <h2 className="section-title">Akar sejarah yang tumbuh bersama zaman</h2>
           </div>
           <div className="space-y-4 leading-8 text-[#7a6e5a]">
             <p>
-              Desa Sejahtera didirikan pada awal abad ke-20 dari pemukiman kecil
+              Padukuhan Sejahtera didirikan pada awal abad ke-20 dari pemukiman kecil
               di kaki perbukitan yang dikelilingi lahan pertanian subur. Sejak
-              awal, desa ini tumbuh dengan semangat musyawarah dan kerja
+              awal, padukuhan ini tumbuh dengan semangat musyawarah dan kerja
               bersama antarkeluarga.
             </p>
             <p>
-              Dalam perjalanannya, desa berkembang dari kawasan agraris
-              tradisional menjadi desa yang mulai mengadopsi layanan digital,
+              Dalam perjalanannya, padukuhan berkembang dari kawasan agraris
+              tradisional menjadi padukuhan yang mulai mengadopsi layanan digital,
               tanpa meninggalkan nilai adat, solidaritas sosial, dan kearifan
               lokal yang diwariskan para tetua.
             </p>
@@ -96,7 +96,7 @@ export default async function ProfilDesaPage() {
           <div className="overflow-hidden rounded-[2rem] border border-[#ddd1bf] bg-white p-3 shadow-[0_28px_60px_-36px_rgba(52,37,13,0.82)]">
             <Image
               src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80"
-              alt="Dokumentasi sejarah dan pertemuan warga desa"
+              alt="Dokumentasi sejarah dan pertemuan warga padukuhan"
               width={1200}
               height={1500}
               className="h-[560px] w-full rounded-[1.5rem] object-cover"
@@ -162,7 +162,7 @@ export default async function ProfilDesaPage() {
           <div className="overflow-hidden rounded-[2rem] border border-[#ddd1bf] bg-[#f0ece4] shadow-[0_28px_60px_-36px_rgba(52,37,13,0.82)]">
             <Image
               src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80"
-              alt="Peta wilayah dan area pertanian desa"
+              alt="Peta wilayah dan area pertanian padukuhan"
               width={1200}
               height={1200}
               className="h-[520px] w-full object-cover opacity-90"
@@ -175,10 +175,10 @@ export default async function ProfilDesaPage() {
 
         <div className="order-1 space-y-7 lg:order-2">
           <div>
-            <p className="section-kicker">Wilayah Desa</p>
+            <p className="section-kicker">Wilayah Padukuhan</p>
             <h2 className="section-title">Lanskap strategis dengan potensi alam yang kuat</h2>
             <p className="mt-4 leading-8 text-[#7a6e5a]">
-              Desa Sejahtera berada di wilayah perbukitan subur dengan
+              Padukuhan Sejahtera berada di wilayah perbukitan subur dengan
               persawahan produktif, sumber air yang memadai, dan konektivitas
               antardusun yang terus dikembangkan.
             </p>

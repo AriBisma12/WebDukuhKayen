@@ -287,16 +287,27 @@ begin
 
   if exists (
     select 1 from information_schema.columns
-    where table_schema = 'public' and table_name = 'posting_dokumentasi' and column_name = 'is_featured'
+    where table_schema = 'public' and table_name = 'posting_dokumentasi' and column_name = 'sort_order'
   ) then
-    alter table public.posting_dokumentasi rename column is_featured to unggulan;
+    alter table public.posting_dokumentasi rename column sort_order to urutan_tampil;
+  end if;
+end
+$$;
+
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'posting_dokumentasi' and column_name = 'unggulan'
+  ) then
+    alter table public.posting_dokumentasi drop column unggulan;
   end if;
 
   if exists (
     select 1 from information_schema.columns
-    where table_schema = 'public' and table_name = 'posting_dokumentasi' and column_name = 'sort_order'
+    where table_schema = 'public' and table_name = 'posting_dokumentasi' and column_name = 'is_featured'
   ) then
-    alter table public.posting_dokumentasi rename column sort_order to urutan_tampil;
+    alter table public.posting_dokumentasi drop column is_featured;
   end if;
 end
 $$;
@@ -431,6 +442,19 @@ where p.url_gambar is not null
     from public.foto_dokumentasi f
     where f.posting_id = p.id
   );
+
+insert into public.tautan_navigasi (label, href, urutan_tampil)
+select 'Kabar Padukuhan', '/kabar-padukuhan', 3
+where not exists (
+  select 1
+  from public.tautan_navigasi
+  where href = '/kabar-padukuhan'
+);
+
+update public.tautan_navigasi
+set urutan_tampil = 4
+where href = '/dokumentasi-kegiatan'
+  and urutan_tampil = 3;
 
 create or replace function public.set_updated_at()
 returns trigger

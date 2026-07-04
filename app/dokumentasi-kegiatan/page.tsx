@@ -11,9 +11,9 @@ import {
 import { DocumentationPostsSection } from "./documentation-posts-section";
 
 export const metadata: Metadata = {
-  title: "Dokumentasi Kegiatan | Portal Desa Sejahtera",
+  title: "Dokumentasi Kegiatan | Portal Padukuhan Sejahtera",
   description:
-    "Halaman dokumentasi kegiatan Desa Sejahtera yang menampilkan arsip berita, foto, dan video kegiatan warga.",
+    "Halaman dokumentasi kegiatan Padukuhan Sejahtera yang menampilkan arsip berita, foto, dan video kegiatan warga.",
 };
 
 export default async function DokumentasiKegiatanPage() {
@@ -32,7 +32,7 @@ export default async function DokumentasiKegiatanPage() {
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
-            alt="Pemandangan sawah desa"
+            alt="Pemandangan sawah padukuhan"
             fill
             priority
             className="object-cover"
@@ -46,7 +46,7 @@ export default async function DokumentasiKegiatanPage() {
               Dokumentasi Kegiatan
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
-              Jendela keterbukaan dan kebanggaan komunitas Desa Sejahtera
+              Jendela keterbukaan dan kebanggaan komunitas Padukuhan Sejahtera
               melalui rekaman visual kegiatan rutin dan momen spesial.
             </p>
           </div>
@@ -139,7 +139,7 @@ export default async function DokumentasiKegiatanPage() {
             </h2>
             <p className="mt-4 leading-8 text-[#775d14]">
               Kami mengundang warga untuk berbagi foto atau video kegiatan di
-              lingkungan masing-masing untuk ditampilkan di galeri resmi desa.
+              lingkungan masing-masing untuk ditampilkan di galeri resmi padukuhan.
             </p>
             <button type="button" className="mt-8 hero-primary-button">
               Kirim Dokumentasi

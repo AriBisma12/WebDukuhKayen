@@ -47,7 +47,25 @@ export const getNavigationLinks = cache(async (): Promise<NavigationLink[]> => {
     return fallbackNavigation;
   }
 
-  return data;
+  const normalizedData = data.map((item) => ({
+    ...item,
+    href: item.href === "/profil-padukuhan" ? "/profil-desa" : item.href,
+    label:
+      item.href === "/profil-padukuhan" || item.href === "/profil-desa"
+        ? "Profil Padukuhan"
+        : item.label,
+  }));
+
+  const dedupedData = normalizedData.filter((item, index, items) => {
+    return items.findIndex((candidate) => candidate.href === item.href) === index;
+  });
+
+  const knownLinks = new Set(dedupedData.map((item) => item.href));
+  const missingFallbackLinks = fallbackNavigation.filter(
+    (item) => !knownLinks.has(item.href),
+  );
+
+  return [...dedupedData, ...missingFallbackLinks];
 });
 
 export const getVillageNews = cache(async (): Promise<NewsItem[]> => {
@@ -97,7 +115,6 @@ type DocumentationPostRow = {
   ringkasan: string;
   url_gambar: string | null;
   tanggal_terbit: string | null;
-  unggulan: boolean;
   kategori: { nama: string } | null;
   foto_dokumentasi:
     | {
@@ -137,7 +154,7 @@ export const getDocumentationPosts = cache(
     const { data, error } = await supabase
       .from("posting_dokumentasi")
       .select(
-        "judul, ringkasan, url_gambar, tanggal_terbit, unggulan, kategori:kategori_dokumentasi(nama), foto_dokumentasi(url_foto, teks_alt, urutan_tampil)",
+        "judul, ringkasan, url_gambar, tanggal_terbit, kategori:kategori_dokumentasi(nama), foto_dokumentasi(url_foto, teks_alt, urutan_tampil)",
       )
       .order("urutan_tampil", { ascending: true })
       .returns<DocumentationPostRow[]>();
@@ -162,7 +179,6 @@ export const getDocumentationPosts = cache(
         title: item.judul,
         excerpt: item.ringkasan,
         image: coverImage,
-        featured: item.unggulan,
         photos:
           photos.length > 0
             ? photos

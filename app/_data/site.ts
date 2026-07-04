@@ -22,7 +22,6 @@ export type DocumentationPost = {
   title: string;
   excerpt: string;
   image: string;
-  featured?: boolean;
   photos?: DocumentationPhoto[];
 };
 
@@ -50,7 +49,8 @@ export type VillageBoundary = {
 
 export const navigation = [
   { href: "/", label: "Beranda" },
-  { href: "/profil-desa", label: "Profil Desa" },
+  { href: "/profil-desa", label: "Profil Padukuhan" },
+  { href: "/kabar-padukuhan", label: "Kabar Padukuhan" },
   { href: "/dokumentasi-kegiatan", label: "Dokumentasi Kegiatan" },
 ] satisfies NavigationLink[];
 
@@ -60,14 +60,14 @@ export const villageNews = [
     date: "12 Mei 2024",
     title: "Panen Raya Padi Organik Meningkat 20% Tahun Ini",
     excerpt:
-      "Pemerintah desa bersama kelompok tani menyiapkan panen raya dengan sistem pengairan baru.",
+      "Pemerintah padukuhan bersama kelompok tani menyiapkan panen raya dengan sistem pengairan baru.",
     image:
       "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1200&q=80",
   },
   {
     category: "Pengumuman",
     date: "08 Mei 2024",
-    title: "Jadwal Pemeriksaan Kesehatan Gratis di Puskesmas Desa",
+    title: "Jadwal Pemeriksaan Kesehatan Gratis di Puskesmas Padukuhan",
     excerpt:
       "Program kesehatan lansia, ibu hamil, dan balita dibuka kembali setiap hari Rabu pekan kedua.",
     image:
@@ -104,15 +104,14 @@ export const documentationHighlights = [
     date: "12 Maret 2024",
     title: "Gotong Royong Kebersihan Lingkungan",
     excerpt:
-      "Kegiatan rutin bulanan warga Desa Sejahtera dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.",
+      "Kegiatan rutin bulanan warga Padukuhan Sejahtera dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.",
     image:
       "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
-    featured: true,
     photos: [
       {
         image:
           "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
-        alt: "Warga desa bergotong royong di area terbuka",
+        alt: "Warga padukuhan bergotong royong di area terbuka",
       },
       {
         image:
@@ -126,19 +125,19 @@ export const documentationHighlights = [
     date: "17 Agustus 2023",
     title: "Pesta Rakyat Kemerdekaan RI ke-78",
     excerpt:
-      "Perayaan meriah dengan berbagai lomba tradisional dan pementasan seni budaya dari seluruh dusun di desa.",
+      "Perayaan meriah dengan berbagai lomba tradisional dan pementasan seni budaya dari seluruh dusun di padukuhan.",
     image:
       "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80",
     photos: [
       {
         image:
           "https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80",
-        alt: "Mikrofon panggung untuk acara budaya desa",
+        alt: "Mikrofon panggung untuk acara budaya padukuhan",
       },
       {
         image:
           "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
-        alt: "Keramaian warga dalam festival desa",
+        alt: "Keramaian warga dalam festival padukuhan",
       },
     ],
   },
@@ -159,7 +158,7 @@ export const documentationHighlights = [
       {
         image:
           "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80",
-        alt: "Jalur pembangunan infrastruktur desa",
+        alt: "Jalur pembangunan infrastruktur padukuhan",
       },
     ],
   },
@@ -168,19 +167,19 @@ export const documentationHighlights = [
     date: "20 Januari 2024",
     title: "Musyawarah Perencanaan Pembangunan",
     excerpt:
-      "Diskusi terbuka antara perangkat desa dan tokoh masyarakat dalam menentukan arah pembangunan desa tahun anggaran 2024.",
+      "Diskusi terbuka antara perangkat padukuhan dan tokoh masyarakat dalam menentukan arah pembangunan padukuhan tahun anggaran 2024.",
     image:
       "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
     photos: [
       {
         image:
           "https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80",
-        alt: "Pertemuan warga dan perangkat desa",
+        alt: "Pertemuan warga dan perangkat padukuhan",
       },
       {
         image:
           "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80",
-        alt: "Forum diskusi pembangunan di balai desa",
+        alt: "Forum diskusi pembangunan di balai padukuhan",
       },
     ],
   },
@@ -188,14 +187,14 @@ export const documentationHighlights = [
 
 export const documentationVideos = [
   {
-    title: "Rangkuman Festival Desa Sejahtera 2023",
+    title: "Rangkuman Festival Padukuhan Sejahtera 2023",
     duration: "05:42",
     image:
       "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
     videoUrl: "#",
   },
   {
-    title: "Profil Desa Sejahtera: Menuju Desa Mandiri",
+    title: "Profil Padukuhan Sejahtera: Menuju Padukuhan Mandiri",
     duration: "12:15",
     image:
       "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
@@ -210,8 +209,8 @@ export const profileStats = [
 ] satisfies VillageStat[];
 
 export const profileOfficials = [
-  { name: "H. Ahmad Fauzi", role: "Kepala Desa" },
-  { name: "Siti Aminah", role: "Sekretaris Desa" },
+  { name: "H. Ahmad Fauzi", role: "Kepala Padukuhan" },
+  { name: "Siti Aminah", role: "Sekretaris Padukuhan" },
   { name: "Budi Santoso", role: "Kaur Keuangan" },
   { name: "Irfan Hakim", role: "Kaur Pembangunan" },
 ] satisfies ProfileOfficial[];
@@ -220,16 +219,16 @@ export const villageBoundaries = [
   {
     direction: "Batas Utara",
     description:
-      "Berbatasan langsung dengan Hutan Lindung Gunung Hijau dan Desa Makmur.",
+      "Berbatasan langsung dengan Hutan Lindung Gunung Hijau dan Padukuhan Makmur.",
   },
   {
     direction: "Batas Selatan",
     description:
-      "Dibatasi aliran Sungai Jernih yang menghubungkan desa dengan kawasan kabupaten tetangga.",
+      "Dibatasi aliran Sungai Jernih yang menghubungkan padukuhan dengan kawasan kabupaten tetangga.",
   },
   {
     direction: "Batas Timur & Barat",
     description:
-      "Dikelilingi kawasan persawahan produktif yang berbatasan dengan Desa Harapan dan Desa Jaya.",
+      "Dikelilingi kawasan persawahan produktif yang berbatasan dengan Padukuhan Harapan dan Padukuhan Jaya.",
   },
 ] satisfies VillageBoundary[];

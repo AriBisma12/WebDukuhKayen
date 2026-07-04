@@ -1,8 +1,8 @@
 begin;
 
+delete from public.foto_dokumentasi;
 delete from public.posting_dokumentasi;
 delete from public.kategori_dokumentasi;
-delete from public.foto_dokumentasi;
 delete from public.video_dokumentasi;
 delete from public.berita_desa;
 delete from public.tautan_navigasi;
@@ -15,7 +15,8 @@ insert into public.tautan_navigasi (label, href, urutan_tampil)
 values
   ('Beranda', '/', 1),
   ('Profil Desa', '/profil-desa', 2),
-  ('Dokumentasi Kegiatan', '/dokumentasi-kegiatan', 3);
+  ('Kabar Padukuhan', '/kabar-padukuhan', 3),
+  ('Dokumentasi Kegiatan', '/dokumentasi-kegiatan', 4);
 
 insert into public.berita_desa (kategori, judul, ringkasan, url_gambar, tanggal_terbit, urutan_tampil)
 values
@@ -63,7 +64,6 @@ insert into public.posting_dokumentasi (
   ringkasan,
   url_gambar,
   tanggal_terbit,
-  unggulan,
   urutan_tampil
 )
 values
@@ -73,7 +73,6 @@ values
     'Kegiatan rutin bulanan warga Desa Sejahtera dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.',
     'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
     '2024-03-12',
-    true,
     1
   ),
   (
@@ -82,7 +81,6 @@ values
     'Perayaan meriah dengan berbagai lomba tradisional dan pementasan seni budaya dari seluruh dusun di desa.',
     'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=1200&q=80',
     '2023-08-17',
-    false,
     2
   ),
   (
@@ -91,7 +89,6 @@ values
     'Peningkatan sistem pengairan sawah sepanjang 2 km untuk mendukung produktivitas petani padi lokal.',
     'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
     '2024-02-05',
-    false,
     3
   ),
   (
@@ -100,7 +97,6 @@ values
     'Diskusi terbuka antara perangkat desa dan tokoh masyarakat dalam menentukan arah pembangunan desa tahun anggaran 2024.',
     'https://images.unsplash.com/photo-1515169067868-5387ec356754?auto=format&fit=crop&w=1200&q=80',
     '2024-01-20',
-    false,
     4
   );
 

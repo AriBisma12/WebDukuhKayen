@@ -15,6 +15,15 @@ function DocumentationModal({
   post: DocumentationPost | null;
   onClose: () => void;
 }) {
+  const photos = post?.photos?.length
+    ? post.photos
+    : post
+      ? [{ image: post.image, alt: post.title }]
+      : [];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [showAllPhotos, setShowAllPhotos] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
   useEffect(() => {
     if (!post) {
       return;
@@ -25,7 +34,26 @@ function DocumentationModal({
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        if (lightboxIndex !== null) {
+          setLightboxIndex(null);
+          return;
+        }
+
         onClose();
+      }
+
+      if (lightboxIndex !== null && photos.length > 1) {
+        if (event.key === "ArrowLeft") {
+          setLightboxIndex((current) =>
+            current === null ? 0 : (current - 1 + photos.length) % photos.length,
+          );
+        }
+
+        if (event.key === "ArrowRight") {
+          setLightboxIndex((current) =>
+            current === null ? 0 : (current + 1) % photos.length,
+          );
+        }
       }
     };
 
@@ -35,11 +63,40 @@ function DocumentationModal({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [onClose, post]);
+  }, [lightboxIndex, onClose, photos.length, post]);
 
   if (!post) {
     return null;
   }
+
+  const activePhoto = photos[activeIndex] ?? {
+    image: post.image,
+    alt: post.title,
+  };
+  const lightboxPhoto =
+    lightboxIndex !== null
+      ? photos[lightboxIndex] ?? activePhoto
+      : null;
+  const lightboxPosition = lightboxIndex !== null ? lightboxIndex + 1 : 1;
+
+  const handlePhotoChange = (nextIndex: number) => {
+    if (photos.length === 0) {
+      return;
+    }
+
+    const normalizedIndex = (nextIndex + photos.length) % photos.length;
+    setActiveIndex(normalizedIndex);
+  };
+
+  const handleLightboxChange = (nextIndex: number) => {
+    if (photos.length === 0) {
+      return;
+    }
+
+    const normalizedIndex = (nextIndex + photos.length) % photos.length;
+    setLightboxIndex(normalizedIndex);
+    setActiveIndex(normalizedIndex);
+  };
 
   return (
     <div
@@ -60,12 +117,19 @@ function DocumentationModal({
         </button>
 
         <div className="relative h-[280px] md:h-[420px]">
-          <Image
-            src={post.photos?.[0]?.image ?? post.image}
-            alt={post.photos?.[0]?.alt ?? post.title}
-            fill
-            className="object-cover"
-          />
+          <button
+            type="button"
+            onClick={() => setLightboxIndex(activeIndex)}
+            className="absolute inset-0 block"
+            aria-label={`Lihat foto ${activeIndex + 1} lebih besar`}
+          >
+            <Image
+              src={activePhoto.image}
+              alt={activePhoto.alt}
+              fill
+              className="object-cover"
+            />
+          </button>
           <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(31,21,4,0.08),_rgba(31,21,4,0.7))]" />
           <div className="absolute left-6 top-6 rounded-full bg-[#f0cc5a] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#684e08]">
             {post.category}
@@ -78,29 +142,96 @@ function DocumentationModal({
               {post.title}
             </h2>
           </div>
+
+          {photos.length > 1 ? (
+            <>
+              <button
+                type="button"
+                aria-label="Foto sebelumnya"
+                onClick={() => handlePhotoChange(activeIndex - 1)}
+                className="absolute left-5 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl font-bold text-[#60470a] shadow-[0_18px_36px_-24px_rgba(52,37,13,0.9)] transition hover:bg-white"
+              >
+                {"<"}
+              </button>
+              <button
+                type="button"
+                aria-label="Foto berikutnya"
+                onClick={() => handlePhotoChange(activeIndex + 1)}
+                className="absolute right-5 top-1/2 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-2xl font-bold text-[#60470a] shadow-[0_18px_36px_-24px_rgba(52,37,13,0.9)] transition hover:bg-white"
+              >
+                {">"}
+              </button>
+            </>
+          ) : null}
         </div>
 
         <div className="space-y-6 px-6 py-8 md:px-8 md:py-10">
-          {post.photos && post.photos.length > 1 ? (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {post.photos.map((photo) => (
-                <div
-                  key={`${post.title}-${photo.image}`}
-                  className="relative h-32 overflow-hidden rounded-[1.25rem] border border-[#e2d7c4]"
-                >
-                  <Image
-                    src={photo.image}
-                    alt={photo.alt}
-                    fill
-                    className="object-cover"
-                  />
+          {photos.length > 0 ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#9f8f72]">
+                    Galeri Dokumentasi
+                  </p>
+                  <p className="mt-1 text-sm text-[#7a6e5a]">
+                    {activeIndex + 1} dari {photos.length} foto
+                  </p>
                 </div>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => setShowAllPhotos((value) => !value)}
+                  className="rounded-full bg-[#efe3b4] px-4 py-2 text-sm font-semibold text-[#6f5311] transition hover:bg-[#ead99a]"
+                >
+                  {showAllPhotos ? "Sembunyikan Foto" : "Lihat Semua Foto"}
+                </button>
+              </div>
+
+              <div className="flex gap-3 overflow-x-auto pb-2">
+                {photos.map((photo, index) => (
+                  <button
+                    key={`${post.title}-${photo.image}`}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`relative h-24 w-28 shrink-0 overflow-hidden rounded-[1.15rem] border transition ${
+                      index === activeIndex
+                        ? "border-[#8b6c08] ring-2 ring-[#d7bb67]"
+                        : "border-[#e2d7c4] hover:border-[#cbb382]"
+                    }`}
+                  >
+                    <Image
+                      src={photo.image}
+                      alt={photo.alt}
+                      fill
+                      className="object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
+
+              {showAllPhotos ? (
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {photos.map((photo, index) => (
+                    <button
+                      key={`${post.title}-full-${photo.image}`}
+                      type="button"
+                      onClick={() => setLightboxIndex(index)}
+                      className="relative h-40 overflow-hidden rounded-[1.25rem] border border-[#e2d7c4] transition hover:-translate-y-1 hover:shadow-[0_18px_35px_-28px_rgba(52,37,13,0.9)]"
+                    >
+                      <Image
+                        src={photo.image}
+                        alt={photo.alt}
+                        fill
+                        className="object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
             </div>
           ) : null}
           <p className="text-lg leading-8 text-[#6f624d]">{post.excerpt}</p>
           <p className="leading-8 text-[#7a6e5a]">
-            Dokumentasi ini menampilkan rangkuman kegiatan desa yang telah
+            Dokumentasi ini menampilkan rangkuman kegiatan padukuhan yang telah
             berlangsung dan menjadi bagian dari arsip keterbukaan informasi
             untuk masyarakat. Konten dapat dikembangkan lagi dengan detail
             narasi yang lebih lengkap dari database.
@@ -112,9 +243,72 @@ function DocumentationModal({
             <span className="rounded-full bg-[#ece6da] px-4 py-2 text-sm font-semibold text-[#6c604d]">
               Tanggal: {post.date}
             </span>
+            <span className="rounded-full bg-[#ece6da] px-4 py-2 text-sm font-semibold text-[#6c604d]">
+              Total Foto: {photos.length}
+            </span>
           </div>
         </div>
       </div>
+
+      {lightboxPhoto ? (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(21,14,3,0.92)] p-4 backdrop-blur-sm"
+          onClick={() => setLightboxIndex(null)}
+        >
+          <div
+            className="relative flex h-full max-h-[92vh] w-full max-w-6xl items-center justify-center"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              aria-label="Tutup foto"
+              onClick={() => setLightboxIndex(null)}
+              className="absolute right-2 top-2 z-10 flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-xl font-bold text-[#5f4608] shadow-[0_14px_28px_-20px_rgba(52,37,13,0.9)] transition hover:bg-white"
+            >
+              x
+            </button>
+
+            {photos.length > 1 ? (
+              <>
+                <button
+                  type="button"
+                  aria-label="Foto sebelumnya"
+                  onClick={() => handleLightboxChange((lightboxIndex ?? 0) - 1)}
+                  className="absolute left-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-2xl font-bold text-[#5f4608] shadow-[0_14px_28px_-20px_rgba(52,37,13,0.9)] transition hover:bg-white"
+                >
+                  {"<"}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Foto berikutnya"
+                  onClick={() => handleLightboxChange((lightboxIndex ?? 0) + 1)}
+                  className="absolute right-2 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-2xl font-bold text-[#5f4608] shadow-[0_14px_28px_-20px_rgba(52,37,13,0.9)] transition hover:bg-white"
+                >
+                  {">"}
+                </button>
+              </>
+            ) : null}
+
+            <div className="relative h-full max-h-[80vh] w-full overflow-hidden rounded-[1.5rem]">
+              <Image
+                src={lightboxPhoto.image}
+                alt={lightboxPhoto.alt}
+                fill
+                className="object-contain"
+              />
+            </div>
+
+            <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full bg-black/45 px-4 py-2 text-sm text-white">
+              <span>
+                {lightboxPosition} / {photos.length}
+              </span>
+              <span className="max-w-[50vw] truncate text-white/85">
+                {lightboxPhoto.alt}
+              </span>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -125,7 +319,6 @@ function ClickableArticle({
   imageHeightClass,
   titleClassName,
   excerptClassName,
-  showReadMore = false,
   onOpen,
 }: {
   post: DocumentationPost;
@@ -133,7 +326,6 @@ function ClickableArticle({
   imageHeightClass: string;
   titleClassName: string;
   excerptClassName: string;
-  showReadMore?: boolean;
   onOpen: (post: DocumentationPost) => void;
 }) {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
@@ -163,11 +355,12 @@ function ClickableArticle({
         </p>
         <h3 className={titleClassName}>{post.title}</h3>
         <p className={excerptClassName}>{post.excerpt}</p>
-        {showReadMore ? (
-          <span className="mt-6 inline-flex text-sm font-semibold text-[#7a5b0a]">
-            Baca Selengkapnya {"->"}
-          </span>
-        ) : null}
+        <div className="mt-4 flex items-center gap-3 text-sm text-[#8b7c63]">
+          <span>{post.photos?.length ?? 0} foto dokumentasi</span>
+        </div>
+        <span className="mt-6 inline-flex text-sm font-semibold text-[#7a5b0a]">
+          Baca Selengkapnya {"->"}
+        </span>
       </div>
     </article>
   );
@@ -176,53 +369,30 @@ function ClickableArticle({
 export function DocumentationPostsSection({
   posts,
 }: DocumentationPostsSectionProps) {
-  const [selectedPost, setSelectedPost] = useState<DocumentationPost | null>(
-    null,
-  );
-  const [featuredPost, sidePost, ...bottomPosts] = posts;
+  const [selectedPost, setSelectedPost] = useState<DocumentationPost | null>(null);
 
-  if (!featuredPost || !sidePost) {
+  if (posts.length === 0) {
     return null;
   }
 
   return (
     <>
-      <div className="mt-10 grid gap-6 lg:grid-cols-[1.4fr_0.68fr]">
-        <ClickableArticle
-          post={featuredPost}
-          onOpen={setSelectedPost}
-          className="overflow-hidden rounded-[1.75rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
-          imageHeightClass="h-[300px] md:h-[360px]"
-          titleClassName="mt-3 font-heading text-3xl font-bold text-[#47361a]"
-          excerptClassName="mt-4 max-w-3xl leading-8 text-[#7a6e5a]"
-          showReadMore
-        />
-
-        <ClickableArticle
-          post={sidePost}
-          onOpen={setSelectedPost}
-          className="overflow-hidden rounded-[1.75rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
-          imageHeightClass="h-[300px]"
-          titleClassName="mt-3 font-heading text-2xl font-bold text-[#47361a]"
-          excerptClassName="mt-4 leading-8 text-[#7a6e5a]"
-        />
-      </div>
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-[0.62fr_0.62fr_0.76fr]">
-        {bottomPosts.map((post) => (
+      <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {posts.map((post) => (
           <ClickableArticle
             key={post.title}
             post={post}
             onOpen={setSelectedPost}
-            className="overflow-hidden rounded-[1.65rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
-            imageHeightClass="h-[220px]"
-            titleClassName="mt-3 font-heading text-2xl font-bold text-[#47361a]"
-            excerptClassName="mt-4 leading-8 text-[#7a6e5a]"
+            className="flex h-full flex-col overflow-hidden rounded-[1.9rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
+            imageHeightClass="h-[240px] sm:h-[260px]"
+            titleClassName="mt-4 font-heading text-[2rem] font-bold leading-tight text-[#47361a]"
+            excerptClassName="mt-5 leading-8 text-[#7a6e5a]"
           />
         ))}
       </div>
 
       <DocumentationModal
+        key={selectedPost?.title ?? "documentation-modal"}
         post={selectedPost}
         onClose={() => setSelectedPost(null)}
       />

@@ -45,7 +45,6 @@ create table if not exists public.posting_dokumentasi (
   ringkasan text not null,
   url_gambar text,
   tanggal_terbit date,
-  unggulan boolean not null default false,
   urutan_tampil integer not null default 0,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
