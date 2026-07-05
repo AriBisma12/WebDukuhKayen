@@ -9,9 +9,9 @@ import {
 } from "@/lib/site-content";
 
 export const metadata: Metadata = {
-  title: "Profil Padukuhan | Portal Padukuhan Sejahtera",
+  title: "Profil Padukuhan | Portal Padukuhan Kayen",
   description:
-    "Informasi profil Padukuhan Sejahtera mencakup sejarah padukuhan, struktur organisasi, statistik, dan gambaran wilayah.",
+    "Informasi profil Padukuhan Kayen mencakup sejarah padukuhan, struktur organisasi, statistik, dan gambaran wilayah.",
 };
 
 export default async function ProfilDesaPage() {
@@ -44,7 +44,7 @@ export default async function ProfilDesaPage() {
               Profil Utama
             </span>
             <h1 className="mt-5 font-heading text-4xl font-extrabold text-white md:text-6xl">
-              Pusat Pelayanan Masyarakat Padukuhan Sejahtera
+              Pusat Pelayanan Masyarakat Padukuhan Kayen
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
               Wujud transparansi dan modernisasi pelayanan warga yang tetap
@@ -62,7 +62,7 @@ export default async function ProfilDesaPage() {
           </div>
           <div className="space-y-4 leading-8 text-[#7a6e5a]">
             <p>
-              Padukuhan Sejahtera didirikan pada awal abad ke-20 dari pemukiman kecil
+              Padukuhan Kayen didirikan pada awal abad ke-20 dari pemukiman kecil
               di kaki perbukitan yang dikelilingi lahan pertanian subur. Sejak
               awal, padukuhan ini tumbuh dengan semangat musyawarah dan kerja
               bersama antarkeluarga.
@@ -178,7 +178,7 @@ export default async function ProfilDesaPage() {
             <p className="section-kicker">Wilayah Padukuhan</p>
             <h2 className="section-title">Lanskap strategis dengan potensi alam yang kuat</h2>
             <p className="mt-4 leading-8 text-[#7a6e5a]">
-              Padukuhan Sejahtera berada di wilayah perbukitan subur dengan
+              Padukuhan Kayen berada di wilayah perbukitan subur dengan
               persawahan produktif, sumber air yang memadai, dan konektivitas
               antardusun yang terus dikembangkan.
             </p>

@@ -6,9 +6,9 @@ import { getVillageNews } from "@/lib/site-content";
 import { NewsPostsSection } from "./news-posts-section";
 
 export const metadata: Metadata = {
-  title: "Kabar Padukuhan | Portal Padukuhan Sejahtera",
+  title: "Kabar Padukuhan | Portal Padukuhan Kayen",
   description:
-    "Halaman kabar padukuhan yang menampilkan berita, pengumuman, dan informasi terbaru Padukuhan Sejahtera.",
+    "Halaman kabar padukuhan yang menampilkan berita, pengumuman, dan informasi terbaru Padukuhan Kayen.",
 };
 
 export default async function KabarPadukuhanPage() {
@@ -38,7 +38,7 @@ export default async function KabarPadukuhanPage() {
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
               Informasi terbaru seputar kegiatan, pengumuman, dan perkembangan
-              Padukuhan Sejahtera dalam satu halaman yang rapi dan mudah diikuti.
+              Padukuhan Kayen dalam satu halaman yang rapi dan mudah diikuti.
             </p>
           </div>
         </div>

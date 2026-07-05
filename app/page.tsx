@@ -12,9 +12,9 @@ const missionPoints = [
 ];
 
 export const metadata: Metadata = {
-  title: "Beranda | Portal padukuhan Sejahtera",
+  title: "Beranda | Portal Padukuhan Kayen",
   description:
-    "Halaman utama Portal padukuhan Sejahtera yang menampilkan layanan unggulan, visi misi, berita, dan statistik padukuhan.",
+    "Halaman utama Portal Padukuhan Kayen yang menampilkan layanan unggulan, visi misi, berita, dan statistik padukuhan.",
 };
 
 export default async function HomePage() {
@@ -48,7 +48,7 @@ export default async function HomePage() {
                 Kearifan Lokal.
               </h1>
               <p className="mt-5 text-base leading-8 text-[#746954]">
-                Selamat datang di portal resmi padukuhan Sejahtera. Kami berkomitmen
+                Selamat datang di portal resmi Padukuhan Kayen. Kami berkomitmen
                 untuk mewujudkan pelayanan publik yang transparan, akuntabel,
                 dan berbasis digital demi kesejahteraan seluruh warga.
               </p>
@@ -84,7 +84,7 @@ export default async function HomePage() {
                   Visi Kami
                 </h3>
                 <p className="mt-2 leading-7 text-[#7a6e5a]">
-                  Mewujudkan padukuhan Sejahtera yang mandiri, agamis, dan
+                  Mewujudkan Padukuhan Kayen yang mandiri, agamis, dan
                   sejahtera melalui penguatan ekonomi kerakyatan dan tata kelola
                   pemerintahan yang bersih.
                 </p>
@@ -186,7 +186,7 @@ export default async function HomePage() {
               Statistik padukuhan Tahun 2024
             </h2>
             <p className="mt-3 text-white/82">
-              Data kependudukan dan geografis padukuhan Sejahtera secara real-time.
+              Data kependudukan dan geografis Padukuhan Kayen secara real-time.
             </p>
           </div>
 

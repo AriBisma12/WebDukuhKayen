@@ -11,9 +11,9 @@ import {
 import { DocumentationPostsSection } from "./documentation-posts-section";
 
 export const metadata: Metadata = {
-  title: "Dokumentasi Kegiatan | Portal Padukuhan Sejahtera",
+  title: "Dokumentasi Kegiatan | Portal Padukuhan Kayen",
   description:
-    "Halaman dokumentasi kegiatan Padukuhan Sejahtera yang menampilkan arsip berita, foto, dan video kegiatan warga.",
+    "Halaman dokumentasi kegiatan Padukuhan Kayen yang menampilkan arsip berita, foto, dan video kegiatan warga.",
 };
 
 export default async function DokumentasiKegiatanPage() {
@@ -46,7 +46,7 @@ export default async function DokumentasiKegiatanPage() {
               Dokumentasi Kegiatan
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
-              Jendela keterbukaan dan kebanggaan komunitas Padukuhan Sejahtera
+              Jendela keterbukaan dan kebanggaan komunitas Padukuhan Kayen
               melalui rekaman visual kegiatan rutin dan momen spesial.
             </p>
           </div>

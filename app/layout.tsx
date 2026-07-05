@@ -13,9 +13,9 @@ const bodyFont = Source_Sans_3({
 });
 
 export const metadata: Metadata = {
-  title: "Portal Desa Sejahtera",
+  title: "Portal Padukuhan Kayen",
   description:
-    "Prototype portal profil dan dokumentasi Desa Sejahtera untuk kebutuhan pengembangan awal.",
+    "Prototype portal profil dan dokumentasi Padukuhan Kayen untuk kebutuhan pengembangan awal.",
 };
 
 export default function RootLayout({
