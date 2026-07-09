@@ -15,6 +15,7 @@ export type AdminNewsItem = {
   url_gambar: string | null;
   tanggal_terbit: string | null;
   urutan_tampil: number;
+  updated_at: string;
 };
 
 export type AdminStatItem = {
@@ -22,6 +23,7 @@ export type AdminStatItem = {
   label: string;
   value: string;
   urutan_tampil: number;
+  updated_at: string;
 };
 
 export type AdminDocumentationCategory = {
@@ -45,6 +47,7 @@ export type AdminDocumentationPost = {
   url_gambar: string | null;
   tanggal_terbit: string | null;
   urutan_tampil: number;
+  updated_at: string;
   kategori: { id: string; nama: string } | null;
   foto_dokumentasi: AdminDocumentationPhoto[];
 };
@@ -56,6 +59,7 @@ export type AdminDocumentationVideo = {
   url_gambar: string | null;
   url_video: string | null;
   urutan_tampil: number;
+  updated_at: string;
 };
 
 export type AdminOfficial = {
@@ -65,6 +69,7 @@ export type AdminOfficial = {
   url_foto: string | null;
   bio: string | null;
   urutan_tampil: number;
+  updated_at: string;
 };
 
 export type AdminBoundary = {
@@ -72,6 +77,7 @@ export type AdminBoundary = {
   arah: string;
   deskripsi: string;
   urutan_tampil: number;
+  updated_at: string;
 };
 
 export type AdminUserRecord = {
@@ -120,7 +126,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       .order("urutan_tampil", { ascending: true }),
     supabase
       .from("berita_desa")
-      .select("id, kategori, judul, ringkasan, url_gambar, tanggal_terbit, urutan_tampil")
+      .select("id, kategori, judul, ringkasan, url_gambar, tanggal_terbit, urutan_tampil, updated_at")
       .order("urutan_tampil", { ascending: true }),
     supabase
       .from("statistik_desa")
@@ -133,25 +139,25 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     supabase
       .from("posting_dokumentasi")
       .select(
-        "id, kategori_id, judul, ringkasan, url_gambar, tanggal_terbit, urutan_tampil, kategori:kategori_dokumentasi(id, nama), foto_dokumentasi(id, url_foto, teks_alt, urutan_tampil)",
+        "id, kategori_id, judul, ringkasan, url_gambar, tanggal_terbit, urutan_tampil, updated_at, kategori:kategori_dokumentasi(id, nama), foto_dokumentasi(id, url_foto, teks_alt, urutan_tampil)",
       )
       .order("urutan_tampil", { ascending: true })
       .returns<AdminDocumentationPostRow[]>(),
     supabase
       .from("video_dokumentasi")
-      .select("id, judul, durasi, url_gambar, url_video, urutan_tampil")
+      .select("id, judul, durasi, url_gambar, url_video, urutan_tampil, updated_at")
       .order("urutan_tampil", { ascending: true }),
     supabase
       .from("statistik_profil")
-      .select("id, label, value, urutan_tampil")
+      .select("id, label, value, urutan_tampil, updated_at")
       .order("urutan_tampil", { ascending: true }),
     supabase
       .from("aparatur_desa")
-      .select("id, nama, peran, url_foto, bio, urutan_tampil")
+      .select("id, nama, peran, url_foto, bio, urutan_tampil, updated_at")
       .order("urutan_tampil", { ascending: true }),
     supabase
       .from("batas_wilayah_desa")
-      .select("id, arah, deskripsi, urutan_tampil")
+      .select("id, arah, deskripsi, urutan_tampil, updated_at")
       .order("urutan_tampil", { ascending: true }),
     supabase
       .from("admin_users")

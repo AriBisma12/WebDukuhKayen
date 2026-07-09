@@ -348,7 +348,7 @@ function SideNavigation({ items }: { items: SectionNavItem[] }) {
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-[22rem] flex-col border-r border-[#dccdab] bg-[#f8f6f1] px-6 py-7 shadow-[8px_0_30px_-28px_rgba(98,75,10,0.24)] lg:flex">
       <div className="mb-12 px-1">
         <h1 className="font-heading text-[2.1rem] font-extrabold text-[#8a6c00]">
-          Rural Harmony
+          Padukuhan Kayen
         </h1>
         <p className="mt-1 text-lg text-[#8a816e]">Village Admin Panel</p>
       </div>

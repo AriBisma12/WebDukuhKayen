@@ -20,6 +20,32 @@ import {
 } from "@/app/_data/site";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
+const FALLBACK_IMAGE =
+  "data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'%3e%3crect width='1200' height='800' fill='%23f3ecdf'/%3e%3cg fill='none' stroke='%23b3913a' stroke-width='18'%3e%3crect x='170' y='160' width='860' height='480' rx='36'/%3e%3cpath d='M250 560l180-190 120 120 120-150 280 220'/%3e%3ccircle cx='420' cy='300' r='46'/%3e%3c/g%3e%3ctext x='50%25' y='690' text-anchor='middle' font-family='Arial,sans-serif' font-size='42' fill='%237a5b0a'%3eDokumentasi Padukuhan%3c/text%3e%3c/svg%3e";
+
+function sanitizeImageUrl(value: string | null | undefined) {
+  if (!value) {
+    return FALLBACK_IMAGE;
+  }
+
+  if (value.startsWith("data:image/") || value.startsWith("/")) {
+    return value;
+  }
+
+  try {
+    const parsedUrl = new URL(value);
+    const allowedHosts = new Set(["images.unsplash.com"]);
+
+    if (!allowedHosts.has(parsedUrl.hostname)) {
+      return FALLBACK_IMAGE;
+    }
+
+    return value;
+  } catch {
+    return FALLBACK_IMAGE;
+  }
+}
+
 function formatIndonesianDate(value: string | null) {
   if (!value) {
     return "";
@@ -88,7 +114,7 @@ export const getVillageNews = cache(async (): Promise<NewsItem[]> => {
     date: formatIndonesianDate(item.tanggal_terbit),
     title: item.judul,
     excerpt: item.ringkasan,
-    image: item.url_gambar ?? "",
+    image: sanitizeImageUrl(item.url_gambar),
   }));
 });
 
@@ -167,11 +193,11 @@ export const getDocumentationPosts = cache(
       const photos = [...(item.foto_dokumentasi ?? [])]
         .sort((a, b) => a.urutan_tampil - b.urutan_tampil)
         .map<DocumentationPhoto>((photo) => ({
-          image: photo.url_foto,
+          image: sanitizeImageUrl(photo.url_foto),
           alt: photo.teks_alt ?? item.judul,
         }));
 
-      const coverImage = item.url_gambar ?? photos[0]?.image ?? "";
+      const coverImage = sanitizeImageUrl(item.url_gambar ?? photos[0]?.image);
 
       return {
         category: item.kategori?.nama ?? "Umum",
@@ -209,7 +235,7 @@ export const getDocumentationVideos = cache(
     return data.map((item) => ({
       title: item.judul,
       duration: item.durasi ?? "",
-      image: item.url_gambar ?? "",
+      image: sanitizeImageUrl(item.url_gambar),
       videoUrl: item.url_video ?? undefined,
     }));
   },

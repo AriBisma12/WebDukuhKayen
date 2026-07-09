@@ -63,6 +63,10 @@ function getBoolean(formData: FormData, key: string) {
   return getString(formData, key) === "true";
 }
 
+function getRedirectTarget(formData: FormData) {
+  return getString(formData, "redirect_to") || "/admin";
+}
+
 function buildAdminRedirectUrl(path: string, status: "success" | "error", message: string) {
   const params = new URLSearchParams({
     status,
@@ -142,6 +146,7 @@ export async function saveRecordAction(formData: FormData) {
   const currentAdmin = await requireAdminUser();
   const resource = getRequiredString(formData, "resource", "Resource") as ResourceName;
   const id = getString(formData, "id");
+  const redirectTarget = getRedirectTarget(formData);
   const supabase = createSupabaseAdminClient();
 
   try {
@@ -337,13 +342,13 @@ export async function saveRecordAction(formData: FormData) {
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Gagal menyimpan data.";
-    redirect(buildAdminRedirectUrl("/admin", "error", message));
+    redirect(buildAdminRedirectUrl(redirectTarget, "error", message));
   }
 
   revalidatePublicPages();
   redirect(
     buildAdminRedirectUrl(
-      "/admin",
+      redirectTarget,
       "success",
       `Perubahan untuk ${resource} berhasil disimpan oleh ${currentAdmin.displayName}.`,
     ),
@@ -354,6 +359,7 @@ export async function deleteRecordAction(formData: FormData) {
   const currentAdmin = await requireAdminUser();
   const resource = getRequiredString(formData, "resource", "Resource") as ResourceName;
   const id = getRequiredString(formData, "id", "ID");
+  const redirectTarget = getRedirectTarget(formData);
   const supabase = createSupabaseAdminClient();
 
   try {
@@ -365,13 +371,13 @@ export async function deleteRecordAction(formData: FormData) {
     if (error) throw error;
   } catch (error) {
     const message = error instanceof Error ? error.message : "Gagal menghapus data.";
-    redirect(buildAdminRedirectUrl("/admin", "error", message));
+    redirect(buildAdminRedirectUrl(redirectTarget, "error", message));
   }
 
   revalidatePublicPages();
   redirect(
     buildAdminRedirectUrl(
-      "/admin",
+      redirectTarget,
       "success",
       `Data ${resource} berhasil dihapus oleh ${currentAdmin.displayName}.`,
     ),

@@ -54,59 +54,30 @@ export default async function ProfilDesaPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-14 px-6 py-20 md:px-8 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="space-y-6">
-          <div>
-            <p className="section-kicker">Sejarah Padukuhan</p>
-            <h2 className="section-title">Akar sejarah yang tumbuh bersama zaman</h2>
-          </div>
-          <div className="space-y-4 leading-8 text-[#7a6e5a]">
-            <p>
-              Padukuhan Sejahtera didirikan pada awal abad ke-20 dari pemukiman kecil
-              di kaki perbukitan yang dikelilingi lahan pertanian subur. Sejak
-              awal, padukuhan ini tumbuh dengan semangat musyawarah dan kerja
-              bersama antarkeluarga.
-            </p>
-            <p>
-              Dalam perjalanannya, padukuhan berkembang dari kawasan agraris
-              tradisional menjadi padukuhan yang mulai mengadopsi layanan digital,
-              tanpa meninggalkan nilai adat, solidaritas sosial, dan kearifan
-              lokal yang diwariskan para tetua.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3">
-            {profileStats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-[1.4rem] border border-[#ddd1bf] bg-[#fbf8f2] p-5 shadow-[0_20px_40px_-36px_rgba(52,37,13,0.8)]"
-              >
-                <p className="font-heading text-3xl font-extrabold text-[#7a5b0a]">
-                  {stat.value}
-                </p>
-                <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#8e7d63]">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
+      <section className="mx-auto max-w-7xl px-6 py-16 md:px-8 md:py-20">
+        <div className="max-w-3xl">
+          <p className="section-kicker">Statistik Padukuhan</p>
+          <h2 className="section-title">Gambaran singkat profil Padukuhan Sejahtera</h2>
+          <p className="mt-4 max-w-2xl leading-8 text-[#7a6e5a]">
+            Ringkasan angka utama yang ditampilkan di halaman profil desa, terhubung langsung
+            dengan data statistik profil pada panel admin.
+          </p>
         </div>
 
-        <div className="relative">
-          <div className="overflow-hidden rounded-[2rem] border border-[#ddd1bf] bg-white p-3 shadow-[0_28px_60px_-36px_rgba(52,37,13,0.82)]">
-            <Image
-              src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80"
-              alt="Dokumentasi sejarah dan pertemuan warga padukuhan"
-              width={1200}
-              height={1500}
-              className="h-[560px] w-full rounded-[1.5rem] object-cover"
-            />
-          </div>
-          <div className="absolute bottom-6 left-6 max-w-[220px] rounded-[1.4rem] bg-[#f4c94b] px-5 py-4 shadow-[0_20px_40px_-28px_rgba(122,91,10,0.95)]">
-            <p className="font-heading text-sm font-bold text-[#5f4600]">
-              &quot;Membangun masa depan tanpa melupakan akar budaya.&quot;
-            </p>
-          </div>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {profileStats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-[1.6rem] border border-[#ddd1bf] bg-[#fbf8f2] p-6 shadow-[0_20px_40px_-36px_rgba(52,37,13,0.8)]"
+            >
+              <p className="font-heading text-4xl font-extrabold text-[#7a5b0a] md:text-5xl">
+                {stat.value}
+              </p>
+              <p className="mt-3 text-sm uppercase tracking-[0.24em] text-[#8e7d63]">
+                {stat.label}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
