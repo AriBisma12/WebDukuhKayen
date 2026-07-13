@@ -1,0 +1,18 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Berjalan setiap 5 hari sekali pada jam 00:00 UTC
+    - cron: '0 0 */5 * *'
+  workflow_dispatch: # Mengizinkan untuk dijalankan manual dari GitHub
+
+jobs:
+  ping-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase Database
+        run: |
+          curl -s -o /dev/null -w "Status Code: %{http_code}\n" \
+          "https://bmrjydtrdjbxjtssbqxl.supabase.co/rest/v1/berita_desa?select=id&limit=1" \
+          -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcmp5ZHRyZGpieGp0c3NicXhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMjg5MTcsImV4cCI6MjA5ODgwNDkxN30.aLPUCMr86QdB-Qh02KvFoAqscXjWhtYjnFKd_PVbjiY" \
+          -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJtcmp5ZHRyZGpieGp0c3NicXhsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMyMjg5MTcsImV4cCI6MjA5ODgwNDkxN30.aLPUCMr86QdB-Qh02KvFoAqscXjWhtYjnFKd_PVbjiY"
