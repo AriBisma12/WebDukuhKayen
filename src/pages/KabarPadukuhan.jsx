@@ -51,7 +51,7 @@ function ClickableNewsCard({ post, onOpen }) {
       </div>
       <div className="flex flex-1 flex-col p-6">
         <p className="text-xs uppercase tracking-[0.16em] text-[#af9d80]">{post.date}</p>
-        <h3 className="mt-4 font-heading text-[2rem] font-bold leading-tight text-[#47361a]">{post.title}</h3>
+        <h3 className="mt-4 font-heading text-2xl font-bold leading-tight text-[#47361a] sm:text-[2rem]">{post.title}</h3>
         <p className="mt-5 flex-1 leading-8 text-[#7a6e5a]">{post.excerpt}</p>
         <span className="mt-6 inline-flex text-sm font-semibold text-[#7a5b0a]">Baca Selengkapnya {"->"}</span>
       </div>
@@ -93,7 +93,7 @@ export default function KabarPadukuhan() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-16 md:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
         <div className="flex flex-wrap justify-center gap-3">
           {categories.map((category) => (
             <button key={category} type="button" onClick={() => setActiveCategory(category)}

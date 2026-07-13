@@ -72,12 +72,12 @@ function AdminListPage({ title, icon, table, columns, emptyText, formFields, emp
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-extrabold text-[#3f2d11]">{icon} {title}</h1>
           <p className="text-[#9f8e78] text-sm mt-1">{emptyText}</p>
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#7a5b0a] text-white font-semibold text-sm hover:bg-[#684d08] shadow-[0_10px_24px_-10px_rgba(122,91,10,0.7)]">
+        <button onClick={openAdd} className="flex min-h-[56px] w-full items-center justify-center gap-2 rounded-2xl bg-[#7a5b0a] px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_-10px_rgba(122,91,10,0.7)] hover:bg-[#684d08] sm:w-auto sm:min-w-[168px]">
           + Tambah
         </button>
       </div>
@@ -116,11 +116,11 @@ function AdminListPage({ title, icon, table, columns, emptyText, formFields, emp
 // Helper row card
 function RowCard({ children, onEdit, onDelete }) {
   return (
-    <div className="bg-[#faf7f0] rounded-2xl border border-[#ddd3c2] p-5 flex items-center gap-4 hover:border-[#c59f38] transition-colors">
+    <div className="bg-[#faf7f0] rounded-2xl border border-[#ddd3c2] p-5 flex flex-col gap-4 hover:border-[#c59f38] transition-colors sm:flex-row sm:items-center">
       <div className="flex-1 min-w-0">{children}</div>
-      <div className="flex gap-2 shrink-0">
-        <button onClick={onEdit} className="px-3 py-1.5 rounded-lg bg-[#ece8df] text-[#7a5b0a] text-xs font-semibold hover:bg-[#e3ddd4]">Edit</button>
-        <button onClick={onDelete} className="px-3 py-1.5 rounded-lg bg-[#fdf0f0] text-[#b54040] text-xs font-semibold hover:bg-[#fae0e0]">Hapus</button>
+      <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
+        <button onClick={onEdit} className="flex-1 px-3 py-2 rounded-lg bg-[#ece8df] text-[#7a5b0a] text-xs font-semibold hover:bg-[#e3ddd4] sm:flex-none">Edit</button>
+        <button onClick={onDelete} className="flex-1 px-3 py-2 rounded-lg bg-[#fdf0f0] text-[#b54040] text-xs font-semibold hover:bg-[#fae0e0] sm:flex-none">Hapus</button>
       </div>
     </div>
   );
@@ -214,8 +214,8 @@ export function AdminStatistikProfil() {
       rowRenderer={(item, onEdit, onDelete) => (
         <RowCard key={item.id} onEdit={onEdit} onDelete={onDelete}>
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-[#f0fdf4] border border-[#86efac] flex items-center justify-center">
-              <span className="font-heading text-base font-extrabold text-[#166534]">{item.value}</span>
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-[#86efac] bg-[#f0fdf4] sm:h-14 sm:w-14 sm:rounded-xl">
+              <span className="px-2 text-center font-heading text-2xl font-extrabold text-[#166534] sm:px-0 sm:text-base">{item.value}</span>
             </div>
             <div>
               <p className="font-heading font-bold text-[#3f2d11]">{item.label}</p>
@@ -289,7 +289,7 @@ export function AdminBatasWilayah() {
       rowRenderer={(item, onEdit, onDelete) => (
         <RowCard key={item.id} onEdit={onEdit} onDelete={onDelete}>
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[#f0cc5a] flex items-center justify-center text-[#5e4300] font-heading font-bold">
+            <div className="flex h-20 w-16 shrink-0 items-center justify-center rounded-[1.25rem] bg-[#f0cc5a] font-heading text-2xl font-bold text-[#5e4300] sm:h-12 sm:w-12 sm:rounded-xl sm:text-base">
               {item.arah.split(' ')[1]?.slice(0, 1) || 'B'}
             </div>
             <div>

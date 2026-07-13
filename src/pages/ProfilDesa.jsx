@@ -40,6 +40,8 @@ export default function ProfilDesa() {
 
   const villageHead = profileOfficials[0];
   const staff = profileOfficials.slice(1);
+  const staffGridClass =
+    staff.length >= 3 ? 'md:grid-cols-3' : staff.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-1';
 
   if (loading) {
     return (
@@ -77,12 +79,12 @@ export default function ProfilDesa() {
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(36,28,12,0.12),_rgba(36,28,12,0.72))]" />
         </div>
-        <div className="relative mx-auto flex min-h-[520px] max-w-7xl items-end px-6 pb-16 pt-14 md:px-8">
+        <div className="relative mx-auto flex min-h-[420px] max-w-7xl items-end px-4 pb-12 pt-12 md:min-h-[520px] md:px-8 md:pb-16 md:pt-14">
           <div className="max-w-2xl">
             <span className="inline-flex rounded-full bg-[#f0cc5a] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-[#624a08]">
               Profil Utama
             </span>
-            <h1 className="mt-5 font-heading text-4xl font-extrabold text-white md:text-6xl">
+            <h1 className="mt-5 font-heading text-3xl font-extrabold text-white sm:text-4xl md:text-6xl">
               Pusat Pelayanan Masyarakat Padukuhan Kayen
             </h1>
             <p className="mt-5 text-base leading-8 text-white/80 md:text-lg">
@@ -94,7 +96,7 @@ export default function ProfilDesa() {
       </section>
 
       {/* History Section */}
-      <section className="mx-auto grid max-w-7xl gap-14 px-6 py-20 md:px-8 lg:grid-cols-[0.95fr_1.05fr]">
+      <section className="mx-auto grid max-w-7xl gap-14 px-4 py-16 md:px-8 md:py-20 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="space-y-6">
           <div>
             <p className="section-kicker">Sejarah Padukuhan</p>
@@ -131,10 +133,10 @@ export default function ProfilDesa() {
             <img
               src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80"
               alt="Dokumentasi sejarah dan pertemuan warga padukuhan"
-              className="h-[560px] w-full rounded-[1.5rem] object-cover"
+              className="h-[320px] w-full rounded-[1.5rem] object-cover sm:h-[420px] lg:h-[560px]"
             />
           </div>
-          <div className="absolute bottom-6 left-6 max-w-[220px] rounded-[1.4rem] bg-[#f4c94b] px-5 py-4 shadow-[0_20px_40px_-28px_rgba(122,91,10,0.95)]">
+          <div className="absolute bottom-4 left-4 max-w-[220px] rounded-[1.4rem] bg-[#f4c94b] px-4 py-3 shadow-[0_20px_40px_-28px_rgba(122,91,10,0.95)] sm:bottom-6 sm:left-6 sm:px-5 sm:py-4">
             <p className="font-heading text-sm font-bold text-[#5f4600]">
               &quot;Membangun masa depan tanpa melupakan akar budaya.&quot;
             </p>
@@ -144,14 +146,14 @@ export default function ProfilDesa() {
 
       {/* Organization Structure */}
       {villageHead && (
-        <section className="mx-auto max-w-7xl px-6 py-6 md:px-8">
+        <section className="mx-auto max-w-7xl px-4 py-6 md:px-8">
           <div className="mx-auto max-w-2xl text-center">
             <p className="section-kicker justify-center">Struktur Organisasi</p>
             <h2 className="section-title">Kepemimpinan yang terbuka dan akuntabel</h2>
           </div>
 
-          <div className="mt-14 overflow-x-auto pb-4">
-            <div className="min-w-[860px]">
+          <div className="mt-14 pb-4">
+            <div>
               <div className="flex flex-col items-center">
                 <div className="relative rounded-[1.7rem] bg-[#7a5b0a] px-8 py-7 text-center text-white shadow-[0_28px_50px_-30px_rgba(122,91,10,0.95)]">
                   <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border-4 border-white/20 bg-white/10 font-heading text-2xl font-bold">
@@ -164,11 +166,11 @@ export default function ProfilDesa() {
 
                 {staff.length > 0 && (
                   <div className="relative mt-12 w-full">
-                    <div className="absolute left-1/2 top-0 h-px w-[68%] -translate-x-1/2 bg-[#ccbfa6]" />
-                    <div className={`grid gap-8 pt-10 grid-cols-${Math.min(staff.length, 3)}`} style={{ gridTemplateColumns: `repeat(${Math.min(staff.length, 3)}, 1fr)` }}>
+                    <div className="absolute left-1/2 top-0 hidden h-px w-[68%] -translate-x-1/2 bg-[#ccbfa6] md:block" />
+                    <div className={`grid grid-cols-1 gap-6 pt-6 ${staffGridClass} md:gap-8 md:pt-10`}>
                       {staff.map((official) => (
                         <div key={official.name} className="relative text-center">
-                          <div className="absolute left-1/2 top-[-2.5rem] h-10 w-px -translate-x-1/2 bg-[#ccbfa6]" />
+                          <div className="absolute left-1/2 top-[-2.5rem] hidden h-10 w-px -translate-x-1/2 bg-[#ccbfa6] md:block" />
                           <div className="rounded-[1.4rem] border border-[#ddd1bf] bg-[#fbf8f2] px-5 py-6 shadow-[0_20px_40px_-36px_rgba(52,37,13,0.8)]">
                             <h4 className="font-heading text-xl font-bold text-[#5a430d]">{official.name}</h4>
                             <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[#8f7d61]">{official.role}</p>
@@ -185,16 +187,16 @@ export default function ProfilDesa() {
       )}
 
       {/* Village Boundaries Section */}
-      <section className="mx-auto grid max-w-7xl items-center gap-14 px-6 py-20 md:px-8 lg:grid-cols-[0.98fr_1.02fr]">
+      <section className="mx-auto grid max-w-7xl items-center gap-14 px-4 py-16 md:px-8 md:py-20 lg:grid-cols-[0.98fr_1.02fr]">
         <div className="relative order-2 lg:order-1">
           <div className="overflow-hidden rounded-[2rem] border border-[#ddd1bf] bg-[#f0ece4] shadow-[0_28px_60px_-36px_rgba(52,37,13,0.82)]">
             <img
               src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80"
               alt="Peta wilayah dan area pertanian padukuhan"
-              className="h-[520px] w-full object-cover opacity-90"
+              className="h-[320px] w-full object-cover opacity-90 sm:h-[420px] lg:h-[520px]"
             />
           </div>
-          <div className="absolute left-6 top-6 rounded-full bg-white/90 px-4 py-2 text-sm font-semibold text-[#7a5b0a] shadow-[0_20px_35px_-26px_rgba(52,37,13,0.7)] backdrop-blur">
+          <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-2 text-xs font-semibold text-[#7a5b0a] shadow-[0_20px_35px_-26px_rgba(52,37,13,0.7)] backdrop-blur sm:left-6 sm:top-6 sm:px-4 sm:text-sm">
             Luas Wilayah: 1.420 Hektar
           </div>
         </div>

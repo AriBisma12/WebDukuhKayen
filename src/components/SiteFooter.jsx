@@ -13,7 +13,7 @@ export function SiteFooter() {
       id="kontak-padukuhan"
       className="mt-16 border-t border-[#ddd3c2] bg-[#ece8df] text-[#6d624f]"
     >
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3 md:px-8">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 md:px-8 md:py-14">
         <div>
           <h3 className="font-heading text-2xl font-bold text-[#49381b]">
             Padukuhan Kayen
@@ -62,9 +62,9 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-[#ddd3c2]">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-5 text-sm md:flex-row md:items-center md:justify-between md:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-4 py-5 text-sm sm:px-6 md:flex-row md:items-center md:justify-between md:px-8">
           <p>© 2024 Pemerintah Padukuhan Kayen. Seluruh Hak Cipta Dilindungi.</p>
-          <div className="flex gap-5">
+          <div className="flex flex-wrap gap-4 md:gap-5">
             <a href="#">Kebijakan Privasi</a>
             <a href="#">Syarat &amp; Ketentuan</a>
           </div>

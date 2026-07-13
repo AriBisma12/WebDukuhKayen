@@ -393,7 +393,7 @@ export default function DokumentasiKegiatan() {
       </section>
 
       {/* Posts with filter */}
-      <section className="mx-auto max-w-7xl px-6 py-16 md:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
         <div className="flex flex-wrap justify-center gap-3">
           {categories.map((category) => (
             <button
@@ -425,7 +425,7 @@ export default function DokumentasiKegiatan() {
                 onOpen={setSelectedPost}
                 className="flex h-full flex-col overflow-hidden rounded-[1.9rem] border border-[#ddd1bf] bg-white shadow-[0_24px_50px_-38px_rgba(53,38,13,0.8)]"
                 imageHeightClass="h-[240px] sm:h-[260px]"
-                titleClassName="mt-4 font-heading text-[2rem] font-bold leading-tight text-[#47361a]"
+                titleClassName="mt-4 font-heading text-2xl font-bold leading-tight text-[#47361a] sm:text-[2rem]"
                 excerptClassName="mt-5 leading-8 text-[#7a6e5a]"
               />
             ))}
@@ -435,7 +435,7 @@ export default function DokumentasiKegiatan() {
 
       {/* Video Section */}
       <section className="bg-[#efede8] py-16">
-        <div className="mx-auto max-w-7xl px-6 md:px-8">
+        <div className="mx-auto max-w-7xl px-4 md:px-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="font-heading text-3xl font-bold text-[#7a5b0a] md:text-4xl">
@@ -490,7 +490,7 @@ export default function DokumentasiKegiatan() {
       </section>
 
       {/* CTA Section */}
-      <section className="mx-auto max-w-7xl px-6 py-16 md:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-16 md:px-8">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#f1c94d] px-6 py-14 text-center shadow-[0_28px_60px_-42px_rgba(122,91,10,0.85)] md:px-12">
           <div className="absolute -left-12 bottom-[-4rem] h-40 w-40 rounded-full bg-white/15" />
           <div className="absolute -right-8 top-[-3rem] h-36 w-36 rounded-full bg-[#ddb332]/35" />

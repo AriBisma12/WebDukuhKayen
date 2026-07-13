@@ -123,12 +123,12 @@ export default function AdminKabar() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-heading text-2xl font-extrabold text-[#3f2d11]">Kabar Padukuhan</h1>
           <p className="text-[#9f8e78] text-sm mt-1">Kelola berita dan pengumuman padukuhan</p>
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#7a5b0a] text-white font-semibold text-sm hover:bg-[#684d08] transition-all shadow-[0_10px_24px_-10px_rgba(122,91,10,0.7)]">
+        <button onClick={openAdd} className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#7a5b0a] text-white font-semibold text-sm hover:bg-[#684d08] transition-all shadow-[0_10px_24px_-10px_rgba(122,91,10,0.7)]">
           + Tambah Kabar
         </button>
       </div>
@@ -146,22 +146,22 @@ export default function AdminKabar() {
       ) : (
         <div className="space-y-3">
           {items.map((item) => (
-            <div key={item.id} className="bg-[#faf7f0] rounded-2xl border border-[#ddd3c2] p-5 flex gap-4 items-start hover:border-[#c59f38] transition-colors">
+            <div key={item.id} className="bg-[#faf7f0] rounded-2xl border border-[#ddd3c2] p-5 flex flex-col gap-4 sm:flex-row sm:items-start hover:border-[#c59f38] transition-colors">
               {item.url_gambar && (
-                <img src={item.url_gambar} alt={item.judul} className="w-20 h-20 rounded-xl object-cover shrink-0" />
+                <img src={item.url_gambar} alt={item.judul} className="h-48 w-full rounded-xl object-cover sm:h-20 sm:w-20 sm:shrink-0" />
               )}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
+                <div className="mb-1 flex flex-wrap items-center gap-2">
                   <span className="px-2 py-0.5 rounded-full bg-[#f0cc5a] text-[#5e4300] text-xs font-bold">{item.kategori}</span>
                   {item.tanggal_terbit && <span className="text-xs text-[#9f8e78]">{item.tanggal_terbit}</span>}
-                  <span className="text-xs text-[#b0a08a] ml-auto">Urutan: {item.urutan_tampil}</span>
+                  <span className="text-xs text-[#b0a08a] sm:ml-auto">Urutan: {item.urutan_tampil}</span>
                 </div>
                 <h3 className="font-heading font-bold text-[#3f2d11] truncate">{item.judul}</h3>
                 <p className="text-sm text-[#9f8e78] line-clamp-2 mt-1">{item.ringkasan}</p>
               </div>
-              <div className="flex gap-2 shrink-0">
-                <button onClick={() => openEdit(item)} className="px-3 py-1.5 rounded-lg bg-[#ece8df] text-[#7a5b0a] text-xs font-semibold hover:bg-[#e3ddd4] transition-colors">Edit</button>
-                <button onClick={() => setDeleteId(item.id)} className="px-3 py-1.5 rounded-lg bg-[#fdf0f0] text-[#b54040] text-xs font-semibold hover:bg-[#fae0e0] transition-colors">Hapus</button>
+              <div className="flex w-full gap-2 sm:w-auto sm:shrink-0">
+                <button onClick={() => openEdit(item)} className="flex-1 px-3 py-1.5 rounded-lg bg-[#ece8df] text-[#7a5b0a] text-xs font-semibold hover:bg-[#e3ddd4] transition-colors sm:flex-none">Edit</button>
+                <button onClick={() => setDeleteId(item.id)} className="flex-1 px-3 py-1.5 rounded-lg bg-[#fdf0f0] text-[#b54040] text-xs font-semibold hover:bg-[#fae0e0] transition-colors sm:flex-none">Hapus</button>
               </div>
             </div>
           ))}
