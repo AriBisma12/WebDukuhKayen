@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useLocation } from 'react-router-dom';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
 import { getProfileOfficials, getProfileStats, getVillageBoundaries } from '../lib/siteContent';
 
 export default function ProfilDesa() {
+  const location = useLocation();
   const [profileOfficials, setProfileOfficials] = useState([]);
   const [profileStats, setProfileStats] = useState([]);
   const [villageBoundaries, setVillageBoundaries] = useState([]);
@@ -24,6 +26,17 @@ export default function ProfilDesa() {
     }
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (loading || location.hash !== '#kontak-padukuhan') {
+      return;
+    }
+
+    const element = document.getElementById('kontak-padukuhan');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [loading, location.hash]);
 
   const villageHead = profileOfficials[0];
   const staff = profileOfficials.slice(1);
@@ -215,7 +228,9 @@ export default function ProfilDesa() {
         </div>
       </section>
 
-      <SiteFooter />
+      <div id="kontak-padukuhan">
+        <SiteFooter />
+      </div>
     </main>
   );
 }
