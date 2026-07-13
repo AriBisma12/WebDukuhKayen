@@ -1,26 +1,46 @@
-import type { Metadata } from "next";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Image } from "@/lib/react-image";
 import { SiteFooter } from "../_components/site-footer";
 import { SiteHeader } from "../_components/site-header";
+import {
+  profileOfficials as fallbackProfileOfficials,
+  profileStats as fallbackProfileStats,
+  villageBoundaries as fallbackVillageBoundaries,
+  type ProfileOfficial,
+  type VillageBoundary,
+  type VillageStat,
+} from "@/app/_data/site";
 import {
   getProfileOfficials,
   getProfileStats,
   getVillageBoundaries,
 } from "@/lib/site-content";
 
-export const metadata: Metadata = {
-  title: "Profil Padukuhan | Portal Padukuhan Sejahtera",
-  description:
-    "Informasi profil Padukuhan Sejahtera mencakup sejarah padukuhan, struktur organisasi, statistik, dan gambaran wilayah.",
-};
+export default function ProfilDesaPage() {
+  const [profileOfficials, setProfileOfficials] =
+    useState<ProfileOfficial[]>(fallbackProfileOfficials);
+  const [profileStats, setProfileStats] = useState<VillageStat[]>(fallbackProfileStats);
+  const [villageBoundaries, setVillageBoundaries] =
+    useState<VillageBoundary[]>(fallbackVillageBoundaries);
+  const [villageHead = fallbackProfileOfficials[0], ...staff] = profileOfficials;
 
-export default async function ProfilDesaPage() {
-  const [profileOfficials, profileStats, villageBoundaries] = await Promise.all([
-    getProfileOfficials(),
-    getProfileStats(),
-    getVillageBoundaries(),
-  ]);
-  const [villageHead, ...staff] = profileOfficials;
+  useEffect(() => {
+    let mounted = true;
+
+    void Promise.all([getProfileOfficials(), getProfileStats(), getVillageBoundaries()]).then(
+      ([officials, stats, boundaries]) => {
+        if (mounted) {
+          setProfileOfficials(officials);
+          setProfileStats(stats);
+          setVillageBoundaries(boundaries);
+        }
+      },
+    );
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#f6f3ee] text-[#3e3323]">
@@ -44,7 +64,7 @@ export default async function ProfilDesaPage() {
               Profil Utama
             </span>
             <h1 className="mt-5 font-heading text-4xl font-extrabold text-white md:text-6xl">
-              Pusat Pelayanan Masyarakat Padukuhan Sejahtera
+              Pusat Pelayanan Masyarakat Padukuhan Kayen
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
               Wujud transparansi dan modernisasi pelayanan warga yang tetap
@@ -57,7 +77,7 @@ export default async function ProfilDesaPage() {
       <section className="mx-auto max-w-7xl px-6 py-16 md:px-8 md:py-20">
         <div className="max-w-3xl">
           <p className="section-kicker">Statistik Padukuhan</p>
-          <h2 className="section-title">Gambaran singkat profil Padukuhan Sejahtera</h2>
+          <h2 className="section-title">Gambaran singkat profil Padukuhan Kayen</h2>
           <p className="mt-4 max-w-2xl leading-8 text-[#7a6e5a]">
             Ringkasan angka utama yang ditampilkan di halaman profil desa, terhubung langsung
             dengan data statistik profil pada panel admin.
@@ -149,7 +169,7 @@ export default async function ProfilDesaPage() {
             <p className="section-kicker">Wilayah Padukuhan</p>
             <h2 className="section-title">Lanskap strategis dengan potensi alam yang kuat</h2>
             <p className="mt-4 leading-8 text-[#7a6e5a]">
-              Padukuhan Sejahtera berada di wilayah perbukitan subur dengan
+              Padukuhan Kayen berada di wilayah perbukitan subur dengan
               persawahan produktif, sumber air yang memadai, dan konektivitas
               antardusun yang terus dikembangkan.
             </p>

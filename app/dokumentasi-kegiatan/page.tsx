@@ -1,8 +1,15 @@
-import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Image } from "@/lib/react-image";
+import { Link } from "@/lib/react-router";
 import { SiteFooter } from "../_components/site-footer";
 import { SiteHeader } from "../_components/site-header";
+import {
+  documentationCategories as fallbackDocumentationCategories,
+  documentationHighlights as fallbackDocumentationHighlights,
+  documentationVideos as fallbackDocumentationVideos,
+  type DocumentationPost,
+  type DocumentationVideo,
+} from "@/app/_data/site";
 import {
   getDocumentationCategories,
   getDocumentationPosts,
@@ -10,19 +17,34 @@ import {
 } from "@/lib/site-content";
 import { DocumentationPostsSection } from "./documentation-posts-section";
 
-export const metadata: Metadata = {
-  title: "Dokumentasi Kegiatan | Portal Padukuhan Sejahtera",
-  description:
-    "Halaman dokumentasi kegiatan Padukuhan Sejahtera yang menampilkan arsip berita, foto, dan video kegiatan warga.",
-};
+export default function DokumentasiKegiatanPage() {
+  const [documentationCategories, setDocumentationCategories] = useState<string[]>(
+    fallbackDocumentationCategories,
+  );
+  const [documentationHighlights, setDocumentationHighlights] =
+    useState<DocumentationPost[]>(fallbackDocumentationHighlights);
+  const [documentationVideos, setDocumentationVideos] =
+    useState<DocumentationVideo[]>(fallbackDocumentationVideos);
 
-export default async function DokumentasiKegiatanPage() {
-  const [documentationCategories, documentationHighlights, documentationVideos] =
-    await Promise.all([
+  useEffect(() => {
+    let mounted = true;
+
+    void Promise.all([
       getDocumentationCategories(),
       getDocumentationPosts(),
       getDocumentationVideos(),
-    ]);
+    ]).then(([categories, posts, videos]) => {
+      if (mounted) {
+        setDocumentationCategories(categories);
+        setDocumentationHighlights(posts);
+        setDocumentationVideos(videos);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#f6f3ee] text-[#3e3323]">
@@ -46,7 +68,7 @@ export default async function DokumentasiKegiatanPage() {
               Dokumentasi Kegiatan
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
-              Jendela keterbukaan dan kebanggaan komunitas Padukuhan Sejahtera
+              Jendela keterbukaan dan kebanggaan komunitas Padukuhan Kayen
               melalui rekaman visual kegiatan rutin dan momen spesial.
             </p>
           </div>

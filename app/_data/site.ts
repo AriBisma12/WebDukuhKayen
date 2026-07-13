@@ -104,7 +104,7 @@ export const documentationHighlights = [
     date: "12 Maret 2024",
     title: "Gotong Royong Kebersihan Lingkungan",
     excerpt:
-      "Kegiatan rutin bulanan warga Padukuhan Sejahtera dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.",
+      "Kegiatan rutin bulanan warga Padukuhan Kayen dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.",
     image:
       "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
     photos: [
@@ -187,14 +187,14 @@ export const documentationHighlights = [
 
 export const documentationVideos = [
   {
-    title: "Rangkuman Festival Padukuhan Sejahtera 2023",
+    title: "Rangkuman Festival Padukuhan Kayen 2023",
     duration: "05:42",
     image:
       "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
     videoUrl: "#",
   },
   {
-    title: "Profil Padukuhan Sejahtera: Menuju Padukuhan Mandiri",
+    title: "Profil Padukuhan Kayen: Menuju Padukuhan Mandiri",
     duration: "12:15",
     image:
       "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",

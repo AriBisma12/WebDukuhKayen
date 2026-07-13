@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/lib/react-router";
 import { useState } from "react";
 
 type NavigationItem = {
@@ -69,7 +69,7 @@ export function SiteHeaderShell({
 
           <div className="hidden items-center gap-3 md:flex">
             <Link
-              href="/admin/login"
+              href="/admin/login/"
               className="rounded-xl border border-[#d2c3a5] px-4 py-2 text-xs font-semibold text-[#7a5b0a] transition hover:bg-[#f2eadb]"
             >
               Login
@@ -123,7 +123,7 @@ export function SiteHeaderShell({
                 );
               })}
               <Link
-                href="/admin/login"
+                href="/admin/login/"
                 onClick={() => setMenuOpen(false)}
                 className="mt-2 rounded-xl border border-[#d2c3a5] px-4 py-3 text-center text-sm font-semibold text-[#7a5b0a] transition hover:bg-[#f2eadb]"
               >

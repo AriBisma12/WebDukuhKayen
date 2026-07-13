@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { Image } from "@/lib/react-image";
 import type { NewsItem } from "../_data/site";
 
 type NewsPostsSectionProps = {

@@ -1,10 +1,10 @@
-import type { AdminSessionUser } from "@/lib/admin-auth";
+import type { AdminSessionUser } from "@/lib/admin-types";
 import type {
   AdminDashboardData,
   AdminDocumentationPost,
   AdminDocumentationVideo,
   AdminNewsItem,
-} from "@/lib/admin-data";
+} from "@/lib/admin-types";
 import { AdminManageManager } from "./admin-manage-manager";
 
 type AdminManagePageProps =

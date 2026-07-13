@@ -70,7 +70,7 @@ values
   (
     (select id from public.kategori_dokumentasi where nama = 'Sosial'),
     'Gotong Royong Kebersihan Lingkungan',
-    'Kegiatan rutin bulanan warga Desa Sejahtera dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.',
+    'Kegiatan rutin bulanan warga Padukuhan Kayen dalam menjaga kebersihan drainase dan fasilitas umum untuk mencegah banjir dan wabah penyakit.',
     'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
     '2024-03-12',
     1
@@ -154,13 +154,13 @@ values
 insert into public.video_dokumentasi (judul, durasi, url_gambar, urutan_tampil)
 values
   (
-    'Rangkuman Festival Desa Sejahtera 2023',
+    'Rangkuman Festival Padukuhan Kayen 2023',
     '05:42',
     'https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80',
     1
   ),
   (
-    'Profil Desa Sejahtera: Menuju Desa Mandiri',
+    'Profil Padukuhan Kayen: Menuju Padukuhan Mandiri',
     '12:15',
     'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80',
     2

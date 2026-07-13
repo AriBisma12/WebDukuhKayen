@@ -1,8 +1,14 @@
-import type { Metadata } from "next";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useState } from "react";
+import { Image } from "@/lib/react-image";
+import { Link } from "@/lib/react-router";
 import { SiteFooter } from "./_components/site-footer";
 import { SiteHeader } from "./_components/site-header";
+import {
+  villageNews as fallbackVillageNews,
+  villageStats as fallbackVillageStats,
+  type NewsItem,
+  type VillageStat,
+} from "@/app/_data/site";
 import { getVillageNews, getVillageStats } from "@/lib/site-content";
 
 const missionPoints = [
@@ -11,17 +17,24 @@ const missionPoints = [
   "Mempercepat digitalisasi layanan agar mudah diakses seluruh warga.",
 ];
 
-export const metadata: Metadata = {
-  title: "Beranda | Portal padukuhan Sejahtera",
-  description:
-    "Halaman utama Portal padukuhan Sejahtera yang menampilkan layanan unggulan, visi misi, berita, dan statistik padukuhan.",
-};
+export default function HomePage() {
+  const [villageNews, setVillageNews] = useState<NewsItem[]>(fallbackVillageNews);
+  const [villageStats, setVillageStats] = useState<VillageStat[]>(fallbackVillageStats);
 
-export default async function HomePage() {
-  const [villageNews, villageStats] = await Promise.all([
-    getVillageNews(),
-    getVillageStats(),
-  ]);
+  useEffect(() => {
+    let mounted = true;
+
+    void Promise.all([getVillageNews(), getVillageStats()]).then(([news, stats]) => {
+      if (mounted) {
+        setVillageNews(news);
+        setVillageStats(stats);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#f6f3ee] text-[#3e3323]">
@@ -48,7 +61,7 @@ export default async function HomePage() {
                 Kearifan Lokal.
               </h1>
               <p className="mt-5 text-base leading-8 text-[#746954]">
-                Selamat datang di portal resmi padukuhan Sejahtera. Kami berkomitmen
+                Selamat datang di portal resmi Padukuhan Kayen. Kami berkomitmen
                 untuk mewujudkan pelayanan publik yang transparan, akuntabel,
                 dan berbasis digital demi kesejahteraan seluruh warga.
               </p>
@@ -84,7 +97,7 @@ export default async function HomePage() {
                   Visi Kami
                 </h3>
                 <p className="mt-2 leading-7 text-[#7a6e5a]">
-                  Mewujudkan padukuhan Sejahtera yang mandiri, agamis, dan
+                  Mewujudkan Padukuhan Kayen yang mandiri, agamis, dan
                   sejahtera melalui penguatan ekonomi kerakyatan dan tata kelola
                   pemerintahan yang bersih.
                 </p>
@@ -186,7 +199,7 @@ export default async function HomePage() {
               Statistik padukuhan Tahun 2024
             </h2>
             <p className="mt-3 text-white/82">
-              Data kependudukan dan geografis padukuhan Sejahtera secara real-time.
+              Data kependudukan dan geografis Padukuhan Kayen secara real-time.
             </p>
           </div>
 

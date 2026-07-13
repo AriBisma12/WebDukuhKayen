@@ -1,10 +1,12 @@
-import Link from "next/link";
+"use client";
+
+import { Link } from "@/lib/react-router";
 import type { ReactNode } from "react";
-import { logoutAdminAction } from "../actions";
+import { useAdminMutationHandlers } from "./admin-client-shared";
 
 type AdminSidebarProps = {
   active: "dashboard" | "berita" | "dokumentasi" | "pengaturan";
-  items: Array<{
+  items: ReadonlyArray<{
     key: "dashboard" | "berita" | "dokumentasi" | "pengaturan";
     href: string;
     label: string;
@@ -13,6 +15,8 @@ type AdminSidebarProps = {
 };
 
 export function AdminSidebar({ active, items }: AdminSidebarProps) {
+  const { logout } = useAdminMutationHandlers();
+
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-[18rem] flex-col border-r border-[#decfae] bg-[#f8f6f1] px-5 py-6 lg:flex">
       <div>
@@ -44,27 +48,26 @@ export function AdminSidebar({ active, items }: AdminSidebarProps) {
       </nav>
 
       <div className="mt-auto border-t border-[#decfae] pt-6">
-        <form action={logoutAdminAction}>
-          <button
-            type="submit"
-            className="flex items-center gap-3 text-[1rem] font-semibold text-[#5f5749] transition hover:text-[#8a6c00]"
-          >
-            <span className="shrink-0">
-              <svg
-                viewBox="0 0 24 24"
-                className="h-5 w-5"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.9"
-              >
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                <path d="m16 17 5-5-5-5" />
-                <path d="M21 12H9" />
-              </svg>
-            </span>
-            <span>Logout</span>
-          </button>
-        </form>
+        <button
+          type="button"
+          onClick={() => void logout()}
+          className="flex items-center gap-3 text-[1rem] font-semibold text-[#5f5749] transition hover:text-[#8a6c00]"
+        >
+          <span className="shrink-0">
+            <svg
+              viewBox="0 0 24 24"
+              className="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.9"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <path d="m16 17 5-5-5-5" />
+              <path d="M21 12H9" />
+            </svg>
+          </span>
+          <span>Logout</span>
+        </button>
       </div>
     </aside>
   );

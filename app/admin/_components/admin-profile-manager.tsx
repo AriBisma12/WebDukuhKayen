@@ -1,18 +1,18 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/lib/react-router";
 import { useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import type { AdminSessionUser } from "@/lib/admin-auth";
+import type { FormEvent, ReactNode } from "react";
+import type { AdminSessionUser } from "@/lib/admin-types";
 import type {
   AdminBoundary,
   AdminDashboardData,
   AdminOfficial,
   AdminStatItem,
-} from "@/lib/admin-data";
+} from "@/lib/admin-types";
 import { AdminMobileMenu } from "./admin-mobile-menu";
 import { AdminSidebar } from "./admin-sidebar";
-import { deleteRecordAction, saveRecordAction } from "../actions";
+import { useAdminMutationHandlers } from "./admin-client-shared";
 
 type AdminProfileManagerProps = {
   currentAdmin: AdminSessionUser;
@@ -50,7 +50,7 @@ type TextAreaProps = {
   required?: boolean;
 };
 
-const PROFILE_REDIRECT = "/admin/profil-desa";
+const PROFILE_REDIRECT = "/admin/profil-desa/";
 
 function PencilIcon() {
   return (
@@ -318,12 +318,14 @@ function EditFormCard({
 function DeleteButtonForm({
   resource,
   id,
+  onDelete,
 }: {
   resource: "statistik_profil" | "aparatur_desa" | "batas_wilayah_desa";
   id: string;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form action={deleteRecordAction}>
+    <form onSubmit={onDelete}>
       <input type="hidden" name="resource" value={resource} />
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
@@ -337,7 +339,15 @@ function DeleteButtonForm({
   );
 }
 
-function StatisticForms({ items }: { items: AdminStatItem[] }) {
+function StatisticForms({
+  items,
+  onSave,
+  onDelete,
+}: {
+  items: AdminStatItem[];
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
+}) {
   return (
     <SectionShell
       title="Statistik Profil"
@@ -348,9 +358,9 @@ function StatisticForms({ items }: { items: AdminStatItem[] }) {
         <EditFormCard
           key={item.id}
           title={item.label}
-          deleteForm={<DeleteButtonForm resource="statistik_profil" id={item.id} />}
+          deleteForm={<DeleteButtonForm resource="statistik_profil" id={item.id} onDelete={onDelete} />}
         >
-          <form action={saveRecordAction} className="space-y-4">
+          <form onSubmit={onSave} className="space-y-4">
             <input type="hidden" name="resource" value="statistik_profil" />
             <input type="hidden" name="id" value={item.id} />
             <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
@@ -378,7 +388,7 @@ function StatisticForms({ items }: { items: AdminStatItem[] }) {
       ))}
 
       <EditFormCard title="Tambah Statistik Baru">
-        <form action={saveRecordAction} className="space-y-4">
+        <form onSubmit={onSave} className="space-y-4">
           <input type="hidden" name="resource" value="statistik_profil" />
           <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
           <div className="grid gap-4 md:grid-cols-3">
@@ -406,7 +416,15 @@ function StatisticForms({ items }: { items: AdminStatItem[] }) {
   );
 }
 
-function BoundaryForms({ items }: { items: AdminBoundary[] }) {
+function BoundaryForms({
+  items,
+  onSave,
+  onDelete,
+}: {
+  items: AdminBoundary[];
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
+}) {
   return (
     <SectionShell
       title="Batas Wilayah"
@@ -417,9 +435,9 @@ function BoundaryForms({ items }: { items: AdminBoundary[] }) {
         <EditFormCard
           key={item.id}
           title={item.arah}
-          deleteForm={<DeleteButtonForm resource="batas_wilayah_desa" id={item.id} />}
+          deleteForm={<DeleteButtonForm resource="batas_wilayah_desa" id={item.id} onDelete={onDelete} />}
         >
-          <form action={saveRecordAction} className="space-y-4">
+          <form onSubmit={onSave} className="space-y-4">
             <input type="hidden" name="resource" value="batas_wilayah_desa" />
             <input type="hidden" name="id" value={item.id} />
             <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
@@ -453,7 +471,7 @@ function BoundaryForms({ items }: { items: AdminBoundary[] }) {
       ))}
 
       <EditFormCard title="Tambah Batas Wilayah">
-        <form action={saveRecordAction} className="space-y-4">
+        <form onSubmit={onSave} className="space-y-4">
           <input type="hidden" name="resource" value="batas_wilayah_desa" />
           <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
           <div className="grid gap-4 md:grid-cols-2">
@@ -481,7 +499,15 @@ function BoundaryForms({ items }: { items: AdminBoundary[] }) {
   );
 }
 
-function OfficialsForms({ items }: { items: AdminOfficial[] }) {
+function OfficialsForms({
+  items,
+  onSave,
+  onDelete,
+}: {
+  items: AdminOfficial[];
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
+}) {
   return (
     <SectionShell
       title="Struktur Organisasi"
@@ -511,10 +537,10 @@ function OfficialsForms({ items }: { items: AdminOfficial[] }) {
                   )}
                 </div>
               </div>
-              <DeleteButtonForm resource="aparatur_desa" id={item.id} />
+              <DeleteButtonForm resource="aparatur_desa" id={item.id} onDelete={onDelete} />
             </div>
 
-            <form action={saveRecordAction} className="mt-5 grid gap-4">
+            <form onSubmit={onSave} className="mt-5 grid gap-4">
               <input type="hidden" name="resource" value="aparatur_desa" />
               <input type="hidden" name="id" value={item.id} />
               <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
@@ -559,7 +585,7 @@ function OfficialsForms({ items }: { items: AdminOfficial[] }) {
       </div>
 
       <EditFormCard title="Tambah Anggota Struktur">
-        <form action={saveRecordAction} className="grid gap-4">
+        <form onSubmit={onSave} className="grid gap-4">
           <input type="hidden" name="resource" value="aparatur_desa" />
           <input type="hidden" name="redirect_to" value={PROFILE_REDIRECT} />
           <div className="grid gap-4 md:grid-cols-2">
@@ -600,10 +626,14 @@ function ProfileModal({
   section,
   onClose,
   data,
+  onSave,
+  onDelete,
 }: {
   section: ProfileSectionKey | null;
   onClose: () => void;
   data: AdminDashboardData;
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   if (!section) {
     return null;
@@ -611,11 +641,11 @@ function ProfileModal({
 
   const content =
     section === "stats" ? (
-      <StatisticForms items={data.profileStats} />
+      <StatisticForms items={data.profileStats} onSave={onSave} onDelete={onDelete} />
     ) : section === "boundaries" ? (
-      <BoundaryForms items={data.boundaries} />
+      <BoundaryForms items={data.boundaries} onSave={onSave} onDelete={onDelete} />
     ) : (
-      <OfficialsForms items={data.officials} />
+      <OfficialsForms items={data.officials} onSave={onSave} onDelete={onDelete} />
     );
 
   const title =
@@ -658,17 +688,18 @@ export function AdminProfileManager({
   status,
   message,
 }: AdminProfileManagerProps) {
+  const { handleDeleteSubmit, handleSaveSubmit } = useAdminMutationHandlers();
   const [openSection, setOpenSection] = useState<ProfileSectionKey | null>(null);
   const sidebarItems = [
-    { key: "dashboard", href: "/admin", label: "Dashboard Overview", icon: <DashboardIcon /> },
-    { key: "berita", href: "/admin/berita", label: "Kelola Berita", icon: <NewsIcon /> },
+    { key: "dashboard", href: "/admin/", label: "Dashboard Overview", icon: <DashboardIcon /> },
+    { key: "berita", href: "/admin/berita/", label: "Kelola Berita", icon: <NewsIcon /> },
     {
       key: "dokumentasi",
-      href: "/admin/dokumentasi",
+      href: "/admin/dokumentasi/",
       label: "Kelola Dokumentasi",
       icon: <GalleryIcon />,
     },
-    { key: "pengaturan", href: "/admin/profil-desa", label: "Pengaturan", icon: <SettingsIcon /> },
+    { key: "pengaturan", href: "/admin/profil-desa/", label: "Pengaturan", icon: <SettingsIcon /> },
   ] as const;
 
   const sectionRows = useMemo<ProfileSectionSummary[]>(
@@ -850,7 +881,13 @@ export function AdminProfileManager({
         </div>
       </div>
 
-      <ProfileModal section={openSection} onClose={() => setOpenSection(null)} data={data} />
+      <ProfileModal
+        section={openSection}
+        onClose={() => setOpenSection(null)}
+        data={data}
+        onSave={handleSaveSubmit}
+        onDelete={handleDeleteSubmit}
+      />
     </main>
   );
 }

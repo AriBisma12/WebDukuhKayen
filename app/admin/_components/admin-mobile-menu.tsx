@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/lib/react-router";
 import { useState } from "react";
 
 type AdminMobileMenuProps = {
@@ -33,10 +33,10 @@ export function AdminMobileMenu({ active }: AdminMobileMenuProps) {
   const [open, setOpen] = useState(false);
 
   const items = [
-    { href: "/admin", label: "Dashboard", key: "dashboard" },
-    { href: "/admin/berita", label: "Berita", key: "berita" },
-    { href: "/admin/dokumentasi", label: "Dokumentasi", key: "dokumentasi" },
-    { href: "/admin/profil-desa", label: "Pengaturan", key: "pengaturan" },
+    { href: "/admin/", label: "Dashboard", key: "dashboard" },
+    { href: "/admin/berita/", label: "Berita", key: "berita" },
+    { href: "/admin/dokumentasi/", label: "Dokumentasi", key: "dokumentasi" },
+    { href: "/admin/profil-desa/", label: "Pengaturan", key: "pengaturan" },
   ] as const;
 
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+import { Image } from "@/lib/react-image";
 import type { DocumentationPost } from "../_data/site";
 
 type DocumentationPostsSectionProps = {
@@ -79,21 +79,21 @@ function DocumentationModal({
       : null;
   const lightboxPosition = lightboxIndex !== null ? lightboxIndex + 1 : 1;
 
-  const handlePhotoChange = (nextIndex: number) => {
+  const handlePhotoChange = (targetIndex: number) => {
     if (photos.length === 0) {
       return;
     }
 
-    const normalizedIndex = (nextIndex + photos.length) % photos.length;
+    const normalizedIndex = (targetIndex + photos.length) % photos.length;
     setActiveIndex(normalizedIndex);
   };
 
-  const handleLightboxChange = (nextIndex: number) => {
+  const handleLightboxChange = (targetIndex: number) => {
     if (photos.length === 0) {
       return;
     }
 
-    const normalizedIndex = (nextIndex + photos.length) % photos.length;
+    const normalizedIndex = (targetIndex + photos.length) % photos.length;
     setLightboxIndex(normalizedIndex);
     setActiveIndex(normalizedIndex);
   };

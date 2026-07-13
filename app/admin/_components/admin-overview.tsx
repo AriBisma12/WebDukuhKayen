@@ -1,6 +1,5 @@
-import type { AdminSessionUser } from "@/lib/admin-auth";
-import type { AdminDashboardData } from "@/lib/admin-data";
-import Link from "next/link";
+import type { AdminDashboardData, AdminSessionUser } from "@/lib/admin-types";
+import { Link } from "@/lib/react-router";
 import { AdminMobileMenu } from "./admin-mobile-menu";
 import { AdminSidebar } from "./admin-sidebar";
 
@@ -158,7 +157,7 @@ function ActivityTable({ data }: { data: AdminDashboardData }) {
         <h2 className="font-heading text-[1.2rem] font-bold text-[#8a6c00] sm:text-[1.6rem]">
           Aktivitas Terbaru
         </h2>
-        <Link href="/admin/berita" className="text-sm font-semibold text-[#8a6c00] sm:text-base">
+        <Link href="/admin/berita/" className="text-sm font-semibold text-[#8a6c00] sm:text-base">
           Lihat Semua
         </Link>
       </div>
@@ -253,7 +252,7 @@ function SideInfo({ data }: { data: AdminDashboardData }) {
           <p className="mt-4 text-sm leading-7 text-[#f8efd6] sm:text-base sm:leading-8">
             Pastikan seluruh data publik portal Padukuhan Kayen sudah diverifikasi sebelum dipublikasikan kepada warga.
           </p>
-          <Link href="/admin/profil-desa" className="mt-6 inline-flex text-sm font-bold text-white sm:text-base">
+          <Link href="/admin/profil-desa/" className="mt-6 inline-flex text-sm font-bold text-white sm:text-base">
             Cek Data Sekarang
           </Link>
         </div>
@@ -290,15 +289,15 @@ export function AdminOverview({
 }: AdminOverviewProps) {
   const documentationTotal = data.documentationPosts.length + data.documentationVideos.length;
   const sidebarItems = [
-    { key: "dashboard", href: "/admin", label: "Dashboard Overview", icon: <DashboardIcon /> },
-    { key: "berita", href: "/admin/berita", label: "Kelola Berita", icon: <NewsIcon /> },
+    { key: "dashboard", href: "/admin/", label: "Dashboard Overview", icon: <DashboardIcon /> },
+    { key: "berita", href: "/admin/berita/", label: "Kelola Berita", icon: <NewsIcon /> },
     {
       key: "dokumentasi",
-      href: "/admin/dokumentasi",
+      href: "/admin/dokumentasi/",
       label: "Kelola Dokumentasi",
       icon: <GalleryIcon />,
     },
-    { key: "pengaturan", href: "/admin/profil-desa", label: "Pengaturan", icon: <SettingsIcon /> },
+    { key: "pengaturan", href: "/admin/profil-desa/", label: "Pengaturan", icon: <SettingsIcon /> },
   ] as const;
 
   return (
@@ -342,13 +341,13 @@ export function AdminOverview({
 
             <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
               <Link
-                href="/admin/berita"
+                href="/admin/berita/"
                 className="inline-flex min-h-[3.1rem] items-center justify-center rounded-[1rem] bg-[#8a6c00] px-5 text-sm font-bold text-white"
               >
                 Buat Berita Baru
               </Link>
               <Link
-                href="/admin/dokumentasi"
+                href="/admin/dokumentasi/"
                 className="inline-flex min-h-[3.1rem] items-center justify-center rounded-[1rem] border border-[#bcae84] bg-white px-5 text-sm font-bold text-[#6a5715]"
               >
                 Tambah Dokumentasi

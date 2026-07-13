@@ -1,19 +1,28 @@
-import type { Metadata } from "next";
-import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
+import { Image } from "@/lib/react-image";
 import { SiteFooter } from "../_components/site-footer";
 import { SiteHeader } from "../_components/site-header";
+import { villageNews as fallbackVillageNews, type NewsItem } from "@/app/_data/site";
 import { getVillageNews } from "@/lib/site-content";
 import { NewsPostsSection } from "./news-posts-section";
 
-export const metadata: Metadata = {
-  title: "Kabar Padukuhan | Portal Padukuhan Sejahtera",
-  description:
-    "Halaman kabar padukuhan yang menampilkan berita, pengumuman, dan informasi terbaru Padukuhan Sejahtera.",
-};
+export default function KabarPadukuhanPage() {
+  const [posts, setPosts] = useState<NewsItem[]>(fallbackVillageNews);
+  const categories = useMemo(() => ["Semua", ...new Set(posts.map((post) => post.category))], [posts]);
 
-export default async function KabarPadukuhanPage() {
-  const posts = await getVillageNews();
-  const categories = ["Semua", ...new Set(posts.map((post) => post.category))];
+  useEffect(() => {
+    let mounted = true;
+
+    void getVillageNews().then((items) => {
+      if (mounted) {
+        setPosts(items);
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#f6f3ee] text-[#3e3323]">
@@ -38,7 +47,7 @@ export default async function KabarPadukuhanPage() {
             </h1>
             <p className="mt-5 text-base leading-8 text-white/88 md:text-lg">
               Informasi terbaru seputar kegiatan, pengumuman, dan perkembangan
-              Padukuhan Sejahtera dalam satu halaman yang rapi dan mudah diikuti.
+              Padukuhan Kayen dalam satu halaman yang rapi dan mudah diikuti.
             </p>
           </div>
         </div>

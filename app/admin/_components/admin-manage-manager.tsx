@@ -1,18 +1,18 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/lib/react-router";
 import { useMemo, useState } from "react";
-import type { ReactNode } from "react";
-import type { AdminSessionUser } from "@/lib/admin-auth";
+import type { FormEvent, ReactNode } from "react";
+import type { AdminSessionUser } from "@/lib/admin-types";
 import type {
   AdminDashboardData,
   AdminDocumentationPost,
   AdminDocumentationVideo,
   AdminNewsItem,
-} from "@/lib/admin-data";
+} from "@/lib/admin-types";
 import { AdminMobileMenu } from "./admin-mobile-menu";
 import { AdminSidebar } from "./admin-sidebar";
-import { deleteRecordAction, saveRecordAction } from "../actions";
+import { useAdminMutationHandlers } from "./admin-client-shared";
 
 type AdminManagePageProps =
   | {
@@ -58,8 +58,8 @@ type TextAreaProps = {
   required?: boolean;
 };
 
-const NEWS_REDIRECT = "/admin/berita";
-const DOCUMENTATION_REDIRECT = "/admin/dokumentasi";
+const NEWS_REDIRECT = "/admin/berita/";
+const DOCUMENTATION_REDIRECT = "/admin/dokumentasi/";
 
 function MessageBanner({ status, message }: { status?: string; message?: string }) {
   if (!message) {
@@ -278,13 +278,15 @@ function DeleteForm({
   resource,
   id,
   redirectTo,
+  onDelete,
 }: {
   resource: "berita_desa" | "posting_dokumentasi" | "video_dokumentasi";
   id: string;
   redirectTo: string;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form action={deleteRecordAction}>
+    <form onSubmit={onDelete}>
       <input type="hidden" name="resource" value={resource} />
       <input type="hidden" name="id" value={id} />
       <input type="hidden" name="redirect_to" value={redirectTo} />
@@ -343,9 +345,15 @@ function ModalShell({
   );
 }
 
-function NewsForm({ item }: { item?: AdminNewsItem }) {
+function NewsForm({
+  item,
+  onSave,
+}: {
+  item?: AdminNewsItem;
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+}) {
   return (
-    <form action={saveRecordAction} className="grid gap-4">
+    <form onSubmit={onSave} className="grid gap-4">
       <input type="hidden" name="resource" value="berita_desa" />
       <input type="hidden" name="redirect_to" value={NEWS_REDIRECT} />
       {item ? <input type="hidden" name="id" value={item.id} /> : null}
@@ -393,12 +401,14 @@ function NewsForm({ item }: { item?: AdminNewsItem }) {
 function DocumentationPostForm({
   item,
   categories,
+  onSave,
 }: {
   item?: AdminDocumentationPost;
   categories: AdminDashboardData["documentationCategories"];
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   return (
-    <form action={saveRecordAction} className="grid gap-4">
+    <form onSubmit={onSave} className="grid gap-4">
       <input type="hidden" name="resource" value="posting_dokumentasi" />
       <input type="hidden" name="redirect_to" value={DOCUMENTATION_REDIRECT} />
       {item ? <input type="hidden" name="id" value={item.id} /> : null}
@@ -452,9 +462,15 @@ function DocumentationPostForm({
   );
 }
 
-function DocumentationVideoForm({ item }: { item?: AdminDocumentationVideo }) {
+function DocumentationVideoForm({
+  item,
+  onSave,
+}: {
+  item?: AdminDocumentationVideo;
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+}) {
   return (
-    <form action={saveRecordAction} className="grid gap-4">
+    <form onSubmit={onSave} className="grid gap-4">
       <input type="hidden" name="resource" value="video_dokumentasi" />
       <input type="hidden" name="redirect_to" value={DOCUMENTATION_REDIRECT} />
       {item ? <input type="hidden" name="id" value={item.id} /> : null}
@@ -497,7 +513,17 @@ function DocumentationVideoForm({ item }: { item?: AdminDocumentationVideo }) {
   );
 }
 
-function NewsModal({ state, onClose }: { state: NewsModalState | null; onClose: () => void }) {
+function NewsModal({
+  state,
+  onClose,
+  onSave,
+  onDelete,
+}: {
+  state: NewsModalState | null;
+  onClose: () => void;
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
+}) {
   if (!state) {
     return null;
   }
@@ -510,10 +536,17 @@ function NewsModal({ state, onClose }: { state: NewsModalState | null; onClose: 
       subtitle="Form ini langsung tersambung ke tabel `berita_desa`."
       onClose={onClose}
       actions={
-        item ? <DeleteForm resource="berita_desa" id={item.id} redirectTo={NEWS_REDIRECT} /> : null
+        item ? (
+          <DeleteForm
+            resource="berita_desa"
+            id={item.id}
+            redirectTo={NEWS_REDIRECT}
+            onDelete={onDelete}
+          />
+        ) : null
       }
     >
-      <NewsForm item={item} />
+      <NewsForm item={item} onSave={onSave} />
     </ModalShell>
   );
 }
@@ -522,10 +555,14 @@ function DocumentationModal({
   state,
   onClose,
   categories,
+  onSave,
+  onDelete,
 }: {
   state: DocumentationModalState | null;
   onClose: () => void;
   categories: AdminDashboardData["documentationCategories"];
+  onSave: (event: FormEvent<HTMLFormElement>) => void;
+  onDelete: (event: FormEvent<HTMLFormElement>) => void;
 }) {
   if (!state) {
     return null;
@@ -538,7 +575,7 @@ function DocumentationModal({
         subtitle="Form ini membuat item baru pada tabel `posting_dokumentasi`."
         onClose={onClose}
       >
-        <DocumentationPostForm categories={categories} />
+        <DocumentationPostForm categories={categories} onSave={onSave} />
       </ModalShell>
     );
   }
@@ -550,7 +587,7 @@ function DocumentationModal({
         subtitle="Form ini membuat item baru pada tabel `video_dokumentasi`."
         onClose={onClose}
       >
-        <DocumentationVideoForm />
+        <DocumentationVideoForm onSave={onSave} />
       </ModalShell>
     );
   }
@@ -566,10 +603,11 @@ function DocumentationModal({
             resource="posting_dokumentasi"
             id={state.item.id}
             redirectTo={DOCUMENTATION_REDIRECT}
+            onDelete={onDelete}
           />
         }
       >
-        <DocumentationPostForm item={state.item} categories={categories} />
+        <DocumentationPostForm item={state.item} categories={categories} onSave={onSave} />
       </ModalShell>
     );
   }
@@ -584,10 +622,11 @@ function DocumentationModal({
           resource="video_dokumentasi"
           id={state.item.id}
           redirectTo={DOCUMENTATION_REDIRECT}
+          onDelete={onDelete}
         />
       }
     >
-      <DocumentationVideoForm item={state.item} />
+      <DocumentationVideoForm item={state.item} onSave={onSave} />
     </ModalShell>
   );
 }
@@ -614,6 +653,7 @@ function MediaCapsule({ type }: { type: "Foto" | "Video" }) {
 
 export function AdminManageManager(props: AdminManagePageProps) {
   const { currentAdmin, data, status, message, type, items } = props;
+  const { handleDeleteSubmit, handleSaveSubmit } = useAdminMutationHandlers();
   const isNews = type === "berita";
   const [newsModal, setNewsModal] = useState<NewsModalState | null>(null);
   const [documentationModal, setDocumentationModal] = useState<DocumentationModalState | null>(null);
@@ -626,15 +666,15 @@ export function AdminManageManager(props: AdminManagePageProps) {
   const previewHref = isNews ? "/kabar-padukuhan" : "/dokumentasi-kegiatan";
   const redirectTarget = isNews ? NEWS_REDIRECT : DOCUMENTATION_REDIRECT;
   const sidebarItems = [
-    { key: "dashboard", href: "/admin", label: "Dashboard Overview", icon: <DashboardIcon /> },
-    { key: "berita", href: "/admin/berita", label: "Kelola Berita", icon: <NewsIcon /> },
+    { key: "dashboard", href: "/admin/", label: "Dashboard Overview", icon: <DashboardIcon /> },
+    { key: "berita", href: "/admin/berita/", label: "Kelola Berita", icon: <NewsIcon /> },
     {
       key: "dokumentasi",
-      href: "/admin/dokumentasi",
+      href: "/admin/dokumentasi/",
       label: "Kelola Dokumentasi",
       icon: <GalleryIcon />,
     },
-    { key: "pengaturan", href: "/admin/profil-desa", label: "Pengaturan", icon: <SettingsIcon /> },
+    { key: "pengaturan", href: "/admin/profil-desa/", label: "Pengaturan", icon: <SettingsIcon /> },
   ] as const;
   const documentationFilterOptions = useMemo(() => ["Semua", "Foto", "Video"] as const, []);
   const visibleItems = useMemo(() => {
@@ -796,23 +836,35 @@ export function AdminManageManager(props: AdminManagePageProps) {
                   {visibleItems.length > 0 ? (
                     visibleItems.map((item) => {
                       const previewLabel = isNews ? "/kabar-padukuhan" : "/dokumentasi-kegiatan";
+                      const newsItem = isNews ? (item as AdminNewsItem) : null;
+                      const documentationItem = isNews
+                        ? null
+                        : (item as AdminDocumentationPost | AdminDocumentationVideo);
+                      const documentationIsPost = documentationItem
+                        ? isDocumentationPost(documentationItem)
+                        : false;
+                      let itemSummary = "Video dokumentasi desa";
+
+                      if (newsItem) {
+                        itemSummary = newsItem.ringkasan;
+                      } else if (documentationItem) {
+                        if (isDocumentationPost(documentationItem)) {
+                          itemSummary = documentationItem.ringkasan;
+                        } else {
+                          itemSummary = documentationItem.durasi || "Video dokumentasi desa";
+                        }
+                      }
 
                       return (
                         <tr key={item.id} className="border-b border-[#f1ead5] last:border-b-0">
                           <td className="px-5 py-5 align-top">
                             <p className="text-[1rem] font-bold text-[#2f2a1f]">{item.judul}</p>
-                            <p className="mt-1 text-sm text-[#857e6f]">
-                              {isNews
-                                ? (item as AdminNewsItem).ringkasan
-                                : isDocumentationPost(item)
-                                  ? item.ringkasan
-                                  : item.durasi || "Video dokumentasi desa"}
-                            </p>
+                            <p className="mt-1 text-sm text-[#857e6f]">{itemSummary}</p>
                           </td>
                           <td className="px-5 py-5 align-top text-sm text-[#5f5a4c]">
-                            {isNews ? (
-                              (item as AdminNewsItem).kategori
-                            ) : isDocumentationPost(item) ? (
+                            {newsItem ? (
+                              newsItem.kategori
+                            ) : documentationIsPost ? (
                               <div className="flex items-center gap-2">
                                 <MediaCapsule type="Foto" />
                                 <p className="font-semibold text-[#6a5715]">Posting Dokumentasi</p>
@@ -825,10 +877,8 @@ export function AdminManageManager(props: AdminManagePageProps) {
                             )}
                           </td>
                           <td className="px-5 py-5 align-top text-sm text-[#5f5a4c]">
-                            {isNews
-                              ? formatAdminDate(
-                                  (item as AdminNewsItem).tanggal_terbit || (item as AdminNewsItem).updated_at,
-                                )
+                            {newsItem
+                              ? formatAdminDate(newsItem.tanggal_terbit || newsItem.updated_at)
                               : formatAdminDate(item.updated_at, true)}
                           </td>
                           <td className="px-5 py-5 align-top">
@@ -841,12 +891,14 @@ export function AdminManageManager(props: AdminManagePageProps) {
                                     return;
                                   }
 
-                                  if (isDocumentationPost(item)) {
-                                    setDocumentationModal({ mode: "edit-post", item });
+                                  if (documentationItem && isDocumentationPost(documentationItem)) {
+                                    setDocumentationModal({ mode: "edit-post", item: documentationItem });
                                     return;
                                   }
 
-                                  setDocumentationModal({ mode: "edit-video", item });
+                                  if (documentationItem) {
+                                    setDocumentationModal({ mode: "edit-video", item: documentationItem });
+                                  }
                                 }}
                                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#e4d7b8] bg-[#fffdf7] transition hover:bg-[#f8f0d8]"
                                 aria-label={`Edit ${item.judul}`}
@@ -862,14 +914,15 @@ export function AdminManageManager(props: AdminManagePageProps) {
                               </Link>
                               <DeleteForm
                                 resource={
-                                  isNews
+                                  newsItem
                                     ? "berita_desa"
-                                    : isDocumentationPost(item)
+                                    : documentationIsPost
                                       ? "posting_dokumentasi"
                                       : "video_dokumentasi"
                                 }
                                 id={item.id}
                                 redirectTo={redirectTarget}
+                                onDelete={handleDeleteSubmit}
                               />
                             </div>
                           </td>
@@ -889,88 +942,104 @@ export function AdminManageManager(props: AdminManagePageProps) {
 
             <div className="grid gap-4 p-4 md:hidden">
               {visibleItems.length > 0 ? (
-                visibleItems.map((item) => (
-                  <div key={item.id} className="rounded-[1.1rem] border border-[#ece2c8] bg-[#fffdf8] p-4">
-                    <p className="text-base font-bold text-[#2f2a1f]">{item.judul}</p>
-                    <p className="mt-1 text-sm leading-6 text-[#857e6f]">
-                      {isNews
-                        ? (item as AdminNewsItem).ringkasan
-                        : isDocumentationPost(item)
-                          ? item.ringkasan
-                          : item.durasi || "Video dokumentasi desa"}
-                    </p>
-                    <div className="mt-4 grid gap-3 text-sm text-[#5f5a4c]">
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#8a8373]">
-                          {isNews ? "Kategori" : "Tipe / Info"}
-                        </p>
-                        {isNews ? (
-                          <p className="mt-1">{(item as AdminNewsItem).kategori}</p>
-                        ) : isDocumentationPost(item) ? (
-                          <div className="mt-2 flex items-center gap-2">
-                            <MediaCapsule type="Foto" />
-                            <p className="font-semibold text-[#6a5715]">Posting Dokumentasi</p>
-                          </div>
-                        ) : (
-                          <div className="mt-2 flex items-center gap-2">
-                            <MediaCapsule type="Video" />
-                            <p className="font-semibold text-[#6a5715]">Video Dokumentasi</p>
-                          </div>
-                        )}
+                visibleItems.map((item) => {
+                  const newsItem = isNews ? (item as AdminNewsItem) : null;
+                  const documentationItem = isNews
+                    ? null
+                    : (item as AdminDocumentationPost | AdminDocumentationVideo);
+                  const documentationIsPost = documentationItem
+                    ? isDocumentationPost(documentationItem)
+                    : false;
+                  let itemSummary = "Video dokumentasi desa";
+
+                  if (newsItem) {
+                    itemSummary = newsItem.ringkasan;
+                  } else if (documentationItem) {
+                    if (isDocumentationPost(documentationItem)) {
+                      itemSummary = documentationItem.ringkasan;
+                    } else {
+                      itemSummary = documentationItem.durasi || "Video dokumentasi desa";
+                    }
+                  }
+
+                  return (
+                    <div key={item.id} className="rounded-[1.1rem] border border-[#ece2c8] bg-[#fffdf8] p-4">
+                      <p className="text-base font-bold text-[#2f2a1f]">{item.judul}</p>
+                      <p className="mt-1 text-sm leading-6 text-[#857e6f]">{itemSummary}</p>
+                      <div className="mt-4 grid gap-3 text-sm text-[#5f5a4c]">
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#8a8373]">
+                            {isNews ? "Kategori" : "Tipe / Info"}
+                          </p>
+                          {newsItem ? (
+                            <p className="mt-1">{newsItem.kategori}</p>
+                          ) : documentationIsPost ? (
+                            <div className="mt-2 flex items-center gap-2">
+                              <MediaCapsule type="Foto" />
+                              <p className="font-semibold text-[#6a5715]">Posting Dokumentasi</p>
+                            </div>
+                          ) : (
+                            <div className="mt-2 flex items-center gap-2">
+                              <MediaCapsule type="Video" />
+                              <p className="font-semibold text-[#6a5715]">Video Dokumentasi</p>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#8a8373]">
+                            {isNews ? "Tanggal" : "Terakhir Diperbarui"}
+                          </p>
+                          <p className="mt-1">
+                            {newsItem
+                              ? formatAdminDate(newsItem.tanggal_terbit || newsItem.updated_at)
+                              : formatAdminDate(item.updated_at, true)}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#8a8373]">
-                          {isNews ? "Tanggal" : "Terakhir Diperbarui"}
-                        </p>
-                        <p className="mt-1">
-                          {isNews
-                            ? formatAdminDate(
-                                (item as AdminNewsItem).tanggal_terbit || (item as AdminNewsItem).updated_at,
-                              )
-                            : formatAdminDate(item.updated_at, true)}
-                        </p>
+                      <div className="mt-4 flex items-center gap-2 text-[#6d5d2d]">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (newsItem) {
+                              setNewsModal({ mode: "edit", item: newsItem });
+                              return;
+                            }
+
+                            if (documentationItem && isDocumentationPost(documentationItem)) {
+                              setDocumentationModal({ mode: "edit-post", item: documentationItem });
+                              return;
+                            }
+
+                            if (documentationItem) {
+                              setDocumentationModal({ mode: "edit-video", item: documentationItem });
+                            }
+                          }}
+                          className="inline-flex h-10 flex-1 items-center justify-center rounded-full border border-[#e4d7b8] bg-[#fffdf7]"
+                        >
+                          <PencilIcon />
+                        </button>
+                        <Link
+                          href={previewHref}
+                          className="inline-flex h-10 flex-1 items-center justify-center rounded-full border border-[#e4d7b8] bg-[#fffdf7]"
+                        >
+                          <EyeIcon />
+                        </Link>
+                        <DeleteForm
+                          resource={
+                            newsItem
+                              ? "berita_desa"
+                              : documentationIsPost
+                                ? "posting_dokumentasi"
+                                : "video_dokumentasi"
+                          }
+                          id={item.id}
+                          redirectTo={redirectTarget}
+                          onDelete={handleDeleteSubmit}
+                        />
                       </div>
                     </div>
-                    <div className="mt-4 flex items-center gap-2 text-[#6d5d2d]">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (isNews) {
-                            setNewsModal({ mode: "edit", item: item as AdminNewsItem });
-                            return;
-                          }
-
-                          if (isDocumentationPost(item)) {
-                            setDocumentationModal({ mode: "edit-post", item });
-                            return;
-                          }
-
-                          setDocumentationModal({ mode: "edit-video", item });
-                        }}
-                        className="inline-flex h-10 flex-1 items-center justify-center rounded-full border border-[#e4d7b8] bg-[#fffdf7]"
-                      >
-                        <PencilIcon />
-                      </button>
-                      <Link
-                        href={previewHref}
-                        className="inline-flex h-10 flex-1 items-center justify-center rounded-full border border-[#e4d7b8] bg-[#fffdf7]"
-                      >
-                        <EyeIcon />
-                      </Link>
-                      <DeleteForm
-                        resource={
-                          isNews
-                            ? "berita_desa"
-                            : isDocumentationPost(item)
-                              ? "posting_dokumentasi"
-                              : "video_dokumentasi"
-                        }
-                        id={item.id}
-                        redirectTo={redirectTarget}
-                      />
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               ) : (
                 <div className="rounded-[1.1rem] border border-[#ece2c8] bg-[#fffdf8] p-4 text-sm text-[#667061]">
                   Belum ada data.
@@ -982,12 +1051,19 @@ export function AdminManageManager(props: AdminManagePageProps) {
       </div>
 
       {isNews ? (
-        <NewsModal state={newsModal} onClose={() => setNewsModal(null)} />
+        <NewsModal
+          state={newsModal}
+          onClose={() => setNewsModal(null)}
+          onSave={handleSaveSubmit}
+          onDelete={handleDeleteSubmit}
+        />
       ) : (
         <DocumentationModal
           state={documentationModal}
           onClose={() => setDocumentationModal(null)}
           categories={data.documentationCategories}
+          onSave={handleSaveSubmit}
+          onDelete={handleDeleteSubmit}
         />
       )}
     </main>
