@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../../supabaseClient';
+import { SITE_IMAGES_BUCKET, uploadPublicImage } from '../../lib/storage';
 
 function Modal({ title, onClose, children }) {
   useEffect(() => {
@@ -76,10 +77,78 @@ function Toast({ message, type }) {
   );
 }
 
+function ImageUploadField({
+  label,
+  folder,
+  currentUrl,
+  selectedFile,
+  selectedFiles,
+  previewUrl,
+  previewUrls,
+  onFileChange,
+  onClear,
+  multiple = false,
+}) {
+  const inputRef = useRef(null);
+  const activePreviewUrls = previewUrls?.length ? previewUrls : previewUrl ? [previewUrl] : currentUrl ? [currentUrl] : [];
+
+  return (
+    <div className="space-y-3">
+      <FormField label={label}>
+        <div className="space-y-3">
+          <input
+            ref={inputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={onFileChange}
+            multiple={multiple}
+          />
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="w-full rounded-xl border border-[#ddd3c2] bg-white px-4 py-3 text-sm font-semibold text-[#5a430d] transition-colors hover:bg-[#f7f2e8]"
+          >
+            Pilih Gambar Dari Perangkat
+          </button>
+          <p className="text-xs text-[#9f8e78]">
+            File akan diunggah ke bucket <span className="font-semibold text-[#7a5b0a]">{SITE_IMAGES_BUCKET}</span> pada folder <span className="font-semibold text-[#7a5b0a]">{folder}</span>.
+          </p>
+          {selectedFiles?.length > 0 ? (
+            <p className="text-xs font-medium text-[#7a5b0a]">File terpilih: {selectedFiles.length} gambar</p>
+          ) : selectedFile ? (
+            <p className="text-xs font-medium text-[#7a5b0a]">File terpilih: {selectedFile.name}</p>
+          ) : null}
+        </div>
+      </FormField>
+      {activePreviewUrls.length > 0 && (
+        <div className="space-y-3 rounded-2xl border border-[#ddd3c2] bg-[#fffdf8] p-4">
+          <p className="text-sm font-semibold text-[#5a430d]">Preview Gambar</p>
+          <div className={`grid gap-3 ${activePreviewUrls.length > 1 ? 'grid-cols-2 sm:grid-cols-3' : 'grid-cols-1'}`}>
+            {activePreviewUrls.map((url, index) => (
+              <img key={`${url}-${index}`} src={url} alt={`Preview gambar ${index + 1}`} className="h-32 w-full rounded-xl object-cover" />
+            ))}
+          </div>
+          <button
+            type="button"
+            onClick={onClear}
+            className="rounded-lg bg-[#fdf0f0] px-3 py-2 text-xs font-semibold text-[#b54040] hover:bg-[#fae0e0]"
+          >
+            Hapus Gambar
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function FotoManager({ postingId, onClose }) {
   const [fotos, setFotos] = useState([]);
   const [form, setForm] = useState({ url_foto: '', teks_alt: '', urutan_tampil: 0 });
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedImageFiles, setSelectedImageFiles] = useState([]);
+  const [imagePreviewUrls, setImagePreviewUrls] = useState([]);
 
   const fetchFotos = async () => {
     const { data } = await supabase
@@ -94,15 +163,66 @@ function FotoManager({ postingId, onClose }) {
     fetchFotos();
   }, [postingId]);
 
+  useEffect(() => () => {
+    imagePreviewUrls.forEach((url) => {
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
+  }, [imagePreviewUrls]);
+
+  const resetSelectedImage = () => {
+    imagePreviewUrls.forEach((url) => {
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
+    setSelectedImageFiles([]);
+    setImagePreviewUrls([]);
+  };
+
+  const handleImageChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+    const imageFiles = files.filter((file) => file.type?.startsWith('image/'));
+    if (imageFiles.length === 0) return;
+    resetSelectedImage();
+    setSelectedImageFiles(imageFiles);
+    setImagePreviewUrls(imageFiles.map((file) => URL.createObjectURL(file)));
+  };
+
   const addFoto = async (e) => {
     e.preventDefault();
     setSaving(true);
-    await supabase
-      .from('foto_dokumentasi')
-      .insert({ ...form, posting_id: postingId, urutan_tampil: Number(form.urutan_tampil) });
-    setForm({ url_foto: '', teks_alt: '', urutan_tampil: 0 });
-    await fetchFotos();
-    setSaving(false);
+    try {
+      if (selectedImageFiles.length > 0) {
+        setUploadingImage(true);
+        const startingOrder = Number(form.urutan_tampil);
+        const rows = await Promise.all(
+          selectedImageFiles.map(async (file, index) => ({
+            posting_id: postingId,
+            url_foto: await uploadPublicImage(file, 'dokumentasi/foto'),
+            teks_alt: form.teks_alt || file.name,
+            urutan_tampil: startingOrder + index,
+          }))
+        );
+        await supabase.from('foto_dokumentasi').insert(rows);
+      } else {
+        await supabase
+          .from('foto_dokumentasi')
+          .insert({
+            ...form,
+            posting_id: postingId,
+            urutan_tampil: Number(form.urutan_tampil),
+          });
+      }
+      setForm({ url_foto: '', teks_alt: '', urutan_tampil: 0 });
+      resetSelectedImage();
+      await fetchFotos();
+    } finally {
+      setUploadingImage(false);
+      setSaving(false);
+    }
   };
 
   const deleteFoto = async (id) => {
@@ -115,8 +235,21 @@ function FotoManager({ postingId, onClose }) {
       <div className="space-y-5">
         <form onSubmit={addFoto} className="space-y-3 rounded-xl border border-[#f0cc5a] bg-[#fffbeb] p-4">
           <p className="text-sm font-bold text-[#5e4300]">Tambah Foto Baru</p>
-          <FormField label="URL Foto *">
-            <input required className={inputClass} placeholder="https://..." value={form.url_foto} onChange={(e) => setForm((f) => ({ ...f, url_foto: e.target.value }))} />
+          <ImageUploadField
+            label="Foto"
+            folder="dokumentasi/foto"
+            currentUrl={form.url_foto}
+            selectedFiles={selectedImageFiles}
+            previewUrls={imagePreviewUrls}
+            onFileChange={handleImageChange}
+            onClear={() => {
+              resetSelectedImage();
+              setForm((current) => ({ ...current, url_foto: '' }));
+            }}
+            multiple
+          />
+          <FormField label="Atau URL Foto *">
+            <input required={selectedImageFiles.length === 0} className={inputClass} placeholder="https://..." value={form.url_foto} onChange={(e) => setForm((f) => ({ ...f, url_foto: e.target.value }))} />
           </FormField>
           <FormField label="Teks Alt">
             <input className={inputClass} placeholder="Deskripsi foto..." value={form.teks_alt} onChange={(e) => setForm((f) => ({ ...f, teks_alt: e.target.value }))} />
@@ -124,8 +257,8 @@ function FotoManager({ postingId, onClose }) {
           <FormField label="Urutan">
             <input type="number" className={inputClass} value={form.urutan_tampil} onChange={(e) => setForm((f) => ({ ...f, urutan_tampil: e.target.value }))} />
           </FormField>
-          <button type="submit" disabled={saving} className="w-full rounded-xl bg-[#7a5b0a] py-2.5 text-sm font-semibold text-white hover:bg-[#684d08] disabled:opacity-50">
-            {saving ? 'Menambahkan...' : 'Tambah Foto'}
+          <button type="submit" disabled={saving || uploadingImage} className="w-full rounded-xl bg-[#7a5b0a] py-2.5 text-sm font-semibold text-white hover:bg-[#684d08] disabled:opacity-50">
+            {uploadingImage ? 'Mengunggah foto...' : saving ? 'Menambahkan...' : 'Tambah Foto'}
           </button>
         </form>
 
@@ -170,6 +303,9 @@ export default function AdminDokumentasi() {
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState(EMPTY);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
@@ -193,9 +329,24 @@ export default function AdminDokumentasi() {
     fetchData();
   }, []);
 
+  useEffect(() => () => {
+    if (imagePreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+  }, [imagePreviewUrl]);
+
+  const resetSelectedImage = () => {
+    if (imagePreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+    setSelectedImageFile(null);
+    setImagePreviewUrl('');
+  };
+
   const openAdd = () => {
     setEditItem(null);
     setForm(EMPTY);
+    resetSelectedImage();
     setModalOpen(true);
   };
 
@@ -209,28 +360,56 @@ export default function AdminDokumentasi() {
       tanggal_terbit: item.tanggal_terbit || '',
       urutan_tampil: item.urutan_tampil,
     });
+    resetSelectedImage();
     setModalOpen(true);
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!file.type?.startsWith('image/')) {
+      showToast('File harus berupa gambar.', 'error');
+      return;
+    }
+    if (imagePreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+    setSelectedImageFile(file);
+    setImagePreviewUrl(URL.createObjectURL(file));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
-    const payload = {
-      ...form,
-      urutan_tampil: Number(form.urutan_tampil),
-      kategori_id: form.kategori_id || null,
-    };
-    const { error } = editItem
-      ? await supabase.from('posting_dokumentasi').update(payload).eq('id', editItem.id)
-      : await supabase.from('posting_dokumentasi').insert(payload);
-    if (error) {
-      showToast('Gagal menyimpan.', 'error');
-    } else {
-      showToast(editItem ? 'Berhasil diperbarui!' : 'Berhasil ditambahkan!');
-      setModalOpen(false);
-      fetchData();
+    try {
+      let imageUrl = form.url_gambar;
+      if (selectedImageFile) {
+        setUploadingImage(true);
+        imageUrl = await uploadPublicImage(selectedImageFile, 'dokumentasi/cover');
+      }
+      const payload = {
+        ...form,
+        url_gambar: imageUrl,
+        urutan_tampil: Number(form.urutan_tampil),
+        kategori_id: form.kategori_id || null,
+      };
+      const { error } = editItem
+        ? await supabase.from('posting_dokumentasi').update(payload).eq('id', editItem.id)
+        : await supabase.from('posting_dokumentasi').insert(payload);
+      if (error) {
+        showToast('Gagal menyimpan.', 'error');
+      } else {
+        showToast(editItem ? 'Berhasil diperbarui!' : 'Berhasil ditambahkan!');
+        resetSelectedImage();
+        setModalOpen(false);
+        fetchData();
+      }
+    } catch (error) {
+      showToast(error.message || 'Gagal mengunggah gambar.', 'error');
+    } finally {
+      setUploadingImage(false);
+      setSaving(false);
     }
-    setSaving(false);
   };
 
   const handleDelete = async () => {
@@ -327,18 +506,30 @@ export default function AdminDokumentasi() {
             <FormField label="Ringkasan *">
               <textarea required rows={4} className={inputClass} value={form.ringkasan} onChange={(e) => setForm((f) => ({ ...f, ringkasan: e.target.value }))} />
             </FormField>
-            <FormField label="URL Gambar Cover">
+            <ImageUploadField
+              label="Gambar Cover"
+              folder="dokumentasi/cover"
+              currentUrl={form.url_gambar}
+              selectedFile={selectedImageFile}
+              previewUrl={imagePreviewUrl}
+              onFileChange={handleImageChange}
+              onClear={() => {
+                resetSelectedImage();
+                setForm((current) => ({ ...current, url_gambar: '' }));
+              }}
+            />
+            <FormField label="Atau URL Gambar Cover">
               <input className={inputClass} placeholder="https://..." value={form.url_gambar} onChange={(e) => setForm((f) => ({ ...f, url_gambar: e.target.value }))} />
             </FormField>
             <FormField label="Urutan">
               <input type="number" className={inputClass} value={form.urutan_tampil} onChange={(e) => setForm((f) => ({ ...f, urutan_tampil: e.target.value }))} />
             </FormField>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setModalOpen(false)} className="flex-1 rounded-xl border border-[#ddd3c2] py-3 text-sm font-semibold text-[#7a6e5a] hover:bg-[#ece8df]">
+              <button type="button" onClick={() => { resetSelectedImage(); setModalOpen(false); }} className="flex-1 rounded-xl border border-[#ddd3c2] py-3 text-sm font-semibold text-[#7a6e5a] hover:bg-[#ece8df]">
                 Batal
               </button>
-              <button type="submit" disabled={saving} className="flex-1 rounded-xl bg-[#7a5b0a] py-3 text-sm font-semibold text-white hover:bg-[#684d08] disabled:opacity-50">
-                {saving ? 'Menyimpan...' : 'Simpan'}
+              <button type="submit" disabled={saving || uploadingImage} className="flex-1 rounded-xl bg-[#7a5b0a] py-3 text-sm font-semibold text-white hover:bg-[#684d08] disabled:opacity-50">
+                {uploadingImage ? 'Mengunggah gambar...' : saving ? 'Menyimpan...' : 'Simpan'}
               </button>
             </div>
           </form>

@@ -50,6 +50,7 @@ export function SiteFooter() {
             <p>Jl. Raya Utama No. 01, Padukuhan Kayen, 12435</p>
             <p>kontak@padukuhankayen.go.id</p>
             <a
+              id="nomor-telepon-padukuhan"
               href={whatsappHref}
               target="_blank"
               rel="noreferrer"

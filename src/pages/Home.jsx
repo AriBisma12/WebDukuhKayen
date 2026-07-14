@@ -11,6 +11,13 @@ export default function Home() {
   const [villageStats, setVillageStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const handleContactScroll = () => {
+    const contactNumber = document.getElementById('nomor-telepon-padukuhan');
+    if (contactNumber) {
+      contactNumber.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   useEffect(() => {
     async function fetchData() {
       const [news, stats] = await Promise.all([
@@ -199,12 +206,17 @@ export default function Home() {
         <div className="rounded-[2rem] bg-[#ece8df] px-6 py-12 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] md:px-12">
           <h2 className="font-heading text-3xl font-bold text-[#7a5b0a] sm:text-4xl">Butuh Informasi Lebih Lanjut?</h2>
           <p className="mx-auto mt-4 max-w-2xl leading-8 text-[#7b6e5c]">
-            Kami siap melayani Anda. Hubungi kantor padukuhan atau akses pusat bantuan kami untuk
-            pertanyaan seputar layanan publik dan administrasi.
+            Kami siap melayani Anda. Hubungi kantor padukuhan untuk pertanyaan seputar layanan
+            publik dan administrasi.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link to="/profil-desa" className="hero-primary-button">Hubungi Kami Sekarang</Link>
-            <Link to="/profil-desa" className="hero-secondary-button">Pusat Bantuan</Link>
+            <button
+              type="button"
+              onClick={handleContactScroll}
+              className="hero-primary-button"
+            >
+              Hubungi Kami Sekarang
+            </button>
           </div>
         </div>
       </section>

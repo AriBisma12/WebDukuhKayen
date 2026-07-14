@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../supabaseClient';
+import { SITE_IMAGES_BUCKET, uploadPublicImage } from '../../lib/storage';
 
 // ── Shared UI Primitives ──────────────────────────────────────────────────────
 
@@ -72,12 +73,16 @@ const TABLE = 'berita_desa';
 const EMPTY_FORM = { kategori: '', judul: '', ringkasan: '', url_gambar: '', tanggal_terbit: '', urutan_tampil: 0 };
 
 export default function AdminKabar() {
+  const imageInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editItem, setEditItem] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState('');
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
@@ -95,23 +100,97 @@ export default function AdminKabar() {
 
   useEffect(() => { fetchItems(); }, []);
 
-  const openAdd = () => { setEditItem(null); setForm(EMPTY_FORM); setModalOpen(true); };
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreviewUrl);
+      }
+    };
+  }, [imagePreviewUrl]);
+
+  const resetSelectedImage = () => {
+    if (imagePreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+    setSelectedImageFile(null);
+    setImagePreviewUrl('');
+  };
+
+  const openAdd = () => {
+    setEditItem(null);
+    setForm(EMPTY_FORM);
+    resetSelectedImage();
+    setModalOpen(true);
+  };
+
   const openEdit = (item) => {
     setEditItem(item);
     setForm({ kategori: item.kategori, judul: item.judul, ringkasan: item.ringkasan, url_gambar: item.url_gambar || '', tanggal_terbit: item.tanggal_terbit || '', urutan_tampil: item.urutan_tampil });
+    resetSelectedImage();
     setModalOpen(true);
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type?.startsWith('image/')) {
+      showToast('File harus berupa gambar.', 'error');
+      event.target.value = '';
+      return;
+    }
+
+    if (imagePreviewUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(imagePreviewUrl);
+    }
+
+    setSelectedImageFile(file);
+    setImagePreviewUrl(URL.createObjectURL(file));
+  };
+
+  const clearImage = () => {
+    resetSelectedImage();
+    setForm((current) => ({ ...current, url_gambar: '' }));
+  };
+
+  const openFilePicker = () => {
+    imageInputRef.current?.click();
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
-    const payload = { ...form, urutan_tampil: Number(form.urutan_tampil) };
-    const { error } = editItem
-      ? await supabase.from(TABLE).update(payload).eq('id', editItem.id)
-      : await supabase.from(TABLE).insert(payload);
-    if (error) { showToast('Gagal menyimpan data.', 'error'); }
-    else { showToast(editItem ? 'Berhasil diperbarui!' : 'Berhasil ditambahkan!'); setModalOpen(false); fetchItems(); }
-    setSaving(false);
+    try {
+      let imageUrl = form.url_gambar;
+
+      if (selectedImageFile) {
+        setUploadingImage(true);
+        imageUrl = await uploadPublicImage(selectedImageFile, 'kabar');
+      }
+
+      const payload = {
+        ...form,
+        url_gambar: imageUrl,
+        urutan_tampil: Number(form.urutan_tampil),
+      };
+      const { error } = editItem
+        ? await supabase.from(TABLE).update(payload).eq('id', editItem.id)
+        : await supabase.from(TABLE).insert(payload);
+
+      if (error) {
+        showToast('Gagal menyimpan data.', 'error');
+      } else {
+        showToast(editItem ? 'Berhasil diperbarui!' : 'Berhasil ditambahkan!');
+        resetSelectedImage();
+        setModalOpen(false);
+        fetchItems();
+      }
+    } catch (error) {
+      showToast(error.message || 'Gagal mengunggah gambar.', 'error');
+    } finally {
+      setUploadingImage(false);
+      setSaving(false);
+    }
   };
 
   const handleDelete = async () => {
@@ -185,16 +264,51 @@ export default function AdminKabar() {
             <FormField label="Ringkasan / Isi *">
               <textarea required rows={4} className={inputClass} placeholder="Isi berita atau pengumuman..." value={form.ringkasan} onChange={e => setForm(f => ({ ...f, ringkasan: e.target.value }))} />
             </FormField>
-            <FormField label="URL Gambar">
+            <FormField label="Gambar">
+              <div className="space-y-3">
+                <input
+                  ref={imageInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                />
+                <button
+                  type="button"
+                  onClick={openFilePicker}
+                  className="w-full rounded-xl border border-[#ddd3c2] bg-white px-4 py-3 text-sm font-semibold text-[#5a430d] transition-colors hover:bg-[#f7f2e8]"
+                >
+                  Pilih Gambar Dari Perangkat
+                </button>
+                <p className="text-xs text-[#9f8e78]">
+                  File akan diunggah ke Supabase Storage bucket <span className="font-semibold text-[#7a5b0a]">{SITE_IMAGES_BUCKET}</span>.
+                </p>
+                {selectedImageFile && (
+                  <p className="text-xs font-medium text-[#7a5b0a]">
+                    File terpilih: {selectedImageFile.name}
+                  </p>
+                )}
+              </div>
+            </FormField>
+            {(imagePreviewUrl || form.url_gambar) && (
+              <div className="space-y-3 rounded-2xl border border-[#ddd3c2] bg-[#fffdf8] p-4">
+                <p className="text-sm font-semibold text-[#5a430d]">Preview Gambar</p>
+                <img src={imagePreviewUrl || form.url_gambar} alt={form.judul || 'Preview gambar'} className="h-48 w-full rounded-xl object-cover" />
+                <button type="button" onClick={clearImage} className="rounded-lg bg-[#fdf0f0] px-3 py-2 text-xs font-semibold text-[#b54040] hover:bg-[#fae0e0]">
+                  Hapus Gambar
+                </button>
+              </div>
+            )}
+            <FormField label="Atau URL Gambar">
               <input className={inputClass} placeholder="https://..." value={form.url_gambar} onChange={e => setForm(f => ({ ...f, url_gambar: e.target.value }))} />
             </FormField>
             <FormField label="Urutan Tampil">
               <input type="number" className={inputClass} value={form.urutan_tampil} onChange={e => setForm(f => ({ ...f, urutan_tampil: e.target.value }))} />
             </FormField>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => setModalOpen(false)} className="flex-1 py-3 rounded-xl border border-[#ddd3c2] text-[#7a6e5a] font-semibold text-sm hover:bg-[#ece8df]">Batal</button>
-              <button type="submit" disabled={saving} className="flex-1 py-3 rounded-xl bg-[#7a5b0a] text-white font-semibold text-sm hover:bg-[#684d08] disabled:opacity-50 transition-all">
-                {saving ? 'Menyimpan...' : 'Simpan'}
+              <button type="button" onClick={() => { resetSelectedImage(); setModalOpen(false); }} className="flex-1 py-3 rounded-xl border border-[#ddd3c2] text-[#7a6e5a] font-semibold text-sm hover:bg-[#ece8df]">Batal</button>
+              <button type="submit" disabled={saving || uploadingImage} className="flex-1 py-3 rounded-xl bg-[#7a5b0a] text-white font-semibold text-sm hover:bg-[#684d08] disabled:opacity-50 transition-all">
+                {uploadingImage ? 'Mengunggah gambar...' : saving ? 'Menyimpan...' : 'Simpan'}
               </button>
             </div>
           </form>
