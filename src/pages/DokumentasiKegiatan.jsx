@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
-import { getDocumentationCategories, getDocumentationPosts, getDocumentationVideos } from '../lib/siteContent';
+import { siteSectionDefaults } from '../data/site';
+import { getDocumentationCategories, getDocumentationPosts, getDocumentationVideos, getSiteSectionContent } from '../lib/siteContent';
 
 // --- Documentation Modal ---
 function DocumentationModal({ post, onClose }) {
@@ -334,18 +335,21 @@ export default function DokumentasiKegiatan() {
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState(['Semua']);
   const [documentationVideos, setDocumentationVideos] = useState([]);
+  const [siteSections, setSiteSections] = useState(siteSectionDefaults);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const [cats, docu, vids] = await Promise.all([
+      const [cats, docu, vids, sections] = await Promise.all([
         getDocumentationCategories(),
         getDocumentationPosts(),
         getDocumentationVideos(),
+        getSiteSectionContent(),
       ]);
       setCategories(cats);
       setPosts(docu);
       setDocumentationVideos(vids);
+      setSiteSections(sections);
       setLoading(false);
     }
     fetchData();
@@ -372,7 +376,7 @@ export default function DokumentasiKegiatan() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
+            src={siteSections.dokumentasi_hero?.background_url}
             alt="Pemandangan sawah padukuhan"
             className="h-full w-full object-cover"
           />

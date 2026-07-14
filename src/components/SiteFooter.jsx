@@ -1,12 +1,26 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { navigation } from '../data/site';
+import { navigation, siteSectionDefaults } from '../data/site';
+import { getSiteSectionContent } from '../lib/siteContent';
 
 export function SiteFooter() {
-  const whatsappNumber = "6281353857853";
+  const [footerContact, setFooterContact] = useState(siteSectionDefaults.footer_contact);
+
+  useEffect(() => {
+    async function fetchFooterContact() {
+      const sections = await getSiteSectionContent();
+      setFooterContact(sections.footer_contact || siteSectionDefaults.footer_contact);
+    }
+
+    fetchFooterContact();
+  }, []);
+
+  const normalizedPhone = (footerContact.phone || '').replace(/\D/g, '').replace(/^0/, '');
+  const whatsappNumber = normalizedPhone ? `62${normalizedPhone}` : '';
   const whatsappMessage = encodeURIComponent(
     "Halo, saya ingin menghubungi penanggung jawab Padukuhan Kayen."
   );
-  const whatsappHref = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  const whatsappHref = whatsappNumber ? `https://wa.me/${whatsappNumber}?text=${whatsappMessage}` : '#';
 
   return (
     <footer
@@ -47,8 +61,8 @@ export function SiteFooter() {
         <div>
           <h4 className="font-semibold text-[#49381b]">Kontak Resmi</h4>
           <div className="mt-4 space-y-3 leading-7">
-            <p>Jl. Raya Utama No. 01, Padukuhan Kayen, 12435</p>
-            <p>kontak@padukuhankayen.go.id</p>
+            <p>{footerContact.address}</p>
+            <p>{footerContact.email}</p>
             <a
               id="nomor-telepon-padukuhan"
               href={whatsappHref}
@@ -56,7 +70,7 @@ export function SiteFooter() {
               rel="noreferrer"
               className="block font-semibold text-[#7a5b0a] hover:text-[#5f4506]"
             >
-              Chat WhatsApp: 0813-5385-7853
+              {footerContact.phone_label}: {footerContact.phone}
             </a>
           </div>
         </div>

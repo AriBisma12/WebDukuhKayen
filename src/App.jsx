@@ -12,6 +12,7 @@ import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import AdminKabar from './pages/admin/AdminKabar';
 import AdminDokumentasi from './pages/admin/AdminDokumentasi';
+import AdminTampilan from './pages/admin/AdminTampilan';
 import {
   AdminVideo,
   AdminStatistikDesa,
@@ -41,6 +42,7 @@ function App() {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="kabar" element={<AdminKabar />} />
             <Route path="dokumentasi" element={<AdminDokumentasi />} />
+            <Route path="tampilan" element={<AdminTampilan />} />
             <Route path="video" element={<AdminVideo />} />
             <Route path="statistik-desa" element={<AdminStatistikDesa />} />
             <Route path="statistik-profil" element={<AdminStatistikProfil />} />

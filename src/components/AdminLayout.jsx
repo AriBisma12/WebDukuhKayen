@@ -31,6 +31,7 @@ export default function AdminLayout() {
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: 'DB' },
+    { name: 'Tampilan', path: '/admin/tampilan', icon: 'TP' },
     { name: 'Kabar Padukuhan', path: '/admin/kabar', icon: 'KB' },
     { name: 'Dokumentasi', path: '/admin/dokumentasi', icon: 'DK' },
     { name: 'Video', path: '/admin/video', icon: 'VD' },

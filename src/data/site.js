@@ -199,3 +199,38 @@ export const missionPoints = [
   "Mengembangkan potensi alam dan UMKM padukuhan secara berkelanjutan.",
   "Mempercepat digitalisasi layanan agar mudah diakses seluruh warga.",
 ];
+
+export const siteSectionDefaults = {
+  home_hero: {
+    background_url:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
+  },
+  home_vision: {
+    image_url:
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80",
+  },
+  footer_contact: {
+    address: "Jl. Raya Utama No. 01, Padukuhan Kayen, 12435",
+    email: "kontak@padukuhankayen.go.id",
+    phone: "0813-5385-7853",
+    phone_label: "Chat WhatsApp",
+  },
+  profil_intro: {
+    hero_background_url:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
+    history_image_url:
+      "https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80",
+  },
+  profil_region: {
+    image_url:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
+  },
+  dokumentasi_hero: {
+    background_url:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
+  },
+  kabar_hero: {
+    background_url:
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80",
+  },
+};

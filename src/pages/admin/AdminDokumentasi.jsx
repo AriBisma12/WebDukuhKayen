@@ -114,6 +114,11 @@ function ImageUploadField({
           <p className="text-xs text-[#9f8e78]">
             File akan diunggah ke bucket <span className="font-semibold text-[#7a5b0a]">{SITE_IMAGES_BUCKET}</span> pada folder <span className="font-semibold text-[#7a5b0a]">{folder}</span>.
           </p>
+          {multiple && (
+            <p className="text-xs text-[#9f8e78]">
+              Anda bisa memilih lebih dari satu foto sekaligus.
+            </p>
+          )}
           {selectedFiles?.length > 0 ? (
             <p className="text-xs font-medium text-[#7a5b0a]">File terpilih: {selectedFiles.length} gambar</p>
           ) : selectedFile ? (
@@ -185,10 +190,41 @@ function FotoManager({ postingId, onClose }) {
     const files = Array.from(event.target.files || []);
     if (files.length === 0) return;
     const imageFiles = files.filter((file) => file.type?.startsWith('image/'));
-    if (imageFiles.length === 0) return;
-    resetSelectedImage();
-    setSelectedImageFiles(imageFiles);
-    setImagePreviewUrls(imageFiles.map((file) => URL.createObjectURL(file)));
+    if (imageFiles.length === 0) {
+      event.target.value = '';
+      return;
+    }
+
+    setSelectedImageFiles((current) => {
+      const mergedFiles = [...current];
+
+      imageFiles.forEach((file) => {
+        const alreadyExists = mergedFiles.some(
+          (item) =>
+            item.name === file.name &&
+            item.size === file.size &&
+            item.lastModified === file.lastModified
+        );
+
+        if (!alreadyExists) {
+          mergedFiles.push(file);
+        }
+      });
+
+      setImagePreviewUrls((currentPreviewUrls) => {
+        currentPreviewUrls.forEach((url) => {
+          if (url.startsWith('blob:')) {
+            URL.revokeObjectURL(url);
+          }
+        });
+
+        return mergedFiles.map((file) => URL.createObjectURL(file));
+      });
+
+      return mergedFiles;
+    });
+
+    event.target.value = '';
   };
 
   const addFoto = async (e) => {
@@ -306,6 +342,10 @@ export default function AdminDokumentasi() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [selectedImageFile, setSelectedImageFile] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState('');
+  const [selectedGalleryFiles, setSelectedGalleryFiles] = useState([]);
+  const [galleryPreviewUrls, setGalleryPreviewUrls] = useState([]);
+  const [galleryAltText, setGalleryAltText] = useState('');
+  const [galleryStartOrder, setGalleryStartOrder] = useState(0);
   const [deleteId, setDeleteId] = useState(null);
   const [toast, setToast] = useState({ message: '', type: 'success' });
 
@@ -335,6 +375,14 @@ export default function AdminDokumentasi() {
     }
   }, [imagePreviewUrl]);
 
+  useEffect(() => () => {
+    galleryPreviewUrls.forEach((url) => {
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
+  }, [galleryPreviewUrls]);
+
   const resetSelectedImage = () => {
     if (imagePreviewUrl.startsWith('blob:')) {
       URL.revokeObjectURL(imagePreviewUrl);
@@ -343,10 +391,23 @@ export default function AdminDokumentasi() {
     setImagePreviewUrl('');
   };
 
+  const resetSelectedGallery = () => {
+    galleryPreviewUrls.forEach((url) => {
+      if (url.startsWith('blob:')) {
+        URL.revokeObjectURL(url);
+      }
+    });
+    setSelectedGalleryFiles([]);
+    setGalleryPreviewUrls([]);
+    setGalleryAltText('');
+    setGalleryStartOrder(0);
+  };
+
   const openAdd = () => {
     setEditItem(null);
     setForm(EMPTY);
     resetSelectedImage();
+    resetSelectedGallery();
     setModalOpen(true);
   };
 
@@ -361,6 +422,7 @@ export default function AdminDokumentasi() {
       urutan_tampil: item.urutan_tampil,
     });
     resetSelectedImage();
+    resetSelectedGallery();
     setModalOpen(true);
   };
 
@@ -378,6 +440,47 @@ export default function AdminDokumentasi() {
     setImagePreviewUrl(URL.createObjectURL(file));
   };
 
+  const handleGalleryImageChange = (event) => {
+    const files = Array.from(event.target.files || []);
+    if (files.length === 0) return;
+    const imageFiles = files.filter((file) => file.type?.startsWith('image/'));
+    if (imageFiles.length === 0) {
+      event.target.value = '';
+      return;
+    }
+
+    setSelectedGalleryFiles((current) => {
+      const mergedFiles = [...current];
+
+      imageFiles.forEach((file) => {
+        const alreadyExists = mergedFiles.some(
+          (item) =>
+            item.name === file.name &&
+            item.size === file.size &&
+            item.lastModified === file.lastModified
+        );
+
+        if (!alreadyExists) {
+          mergedFiles.push(file);
+        }
+      });
+
+      setGalleryPreviewUrls((currentPreviewUrls) => {
+        currentPreviewUrls.forEach((url) => {
+          if (url.startsWith('blob:')) {
+            URL.revokeObjectURL(url);
+          }
+        });
+
+        return mergedFiles.map((file) => URL.createObjectURL(file));
+      });
+
+      return mergedFiles;
+    });
+
+    event.target.value = '';
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -393,16 +496,66 @@ export default function AdminDokumentasi() {
         urutan_tampil: Number(form.urutan_tampil),
         kategori_id: form.kategori_id || null,
       };
-      const { error } = editItem
-        ? await supabase.from('posting_dokumentasi').update(payload).eq('id', editItem.id)
-        : await supabase.from('posting_dokumentasi').insert(payload);
+      const { data, error } = editItem
+        ? await supabase
+            .from('posting_dokumentasi')
+            .update(payload)
+            .eq('id', editItem.id)
+            .select('id')
+            .single()
+        : await supabase
+            .from('posting_dokumentasi')
+            .insert(payload)
+            .select('id')
+            .single();
       if (error) {
         showToast('Gagal menyimpan.', 'error');
       } else {
-        showToast(editItem ? 'Berhasil diperbarui!' : 'Berhasil ditambahkan!');
+        const postingId = data?.id || editItem?.id;
+        if (postingId && selectedGalleryFiles.length > 0) {
+          let startingOrder = Number(galleryStartOrder) || 0;
+
+          if (editItem) {
+            const { data: existingPhotos } = await supabase
+              .from('foto_dokumentasi')
+              .select('urutan_tampil')
+              .eq('posting_id', postingId)
+              .order('urutan_tampil', { ascending: false })
+              .limit(1);
+
+            const lastOrder = existingPhotos?.[0]?.urutan_tampil;
+            if (lastOrder !== undefined && galleryStartOrder === 0) {
+              startingOrder = Number(lastOrder) + 1;
+            }
+          }
+
+          const galleryRows = await Promise.all(
+            selectedGalleryFiles.map(async (file, index) => ({
+              posting_id: postingId,
+              url_foto: await uploadPublicImage(file, 'dokumentasi/foto'),
+              teks_alt: galleryAltText || file.name,
+              urutan_tampil: startingOrder + index,
+            }))
+          );
+
+          const { error: galleryError } = await supabase.from('foto_dokumentasi').insert(galleryRows);
+          if (galleryError) {
+            showToast('Posting tersimpan, tetapi upload galeri gagal.', 'error');
+            return;
+          }
+        }
+
+        showToast(
+          selectedGalleryFiles.length > 0
+            ? 'Posting dan galeri foto berhasil disimpan.'
+            : editItem
+              ? 'Posting berhasil diperbarui.'
+              : 'Posting berhasil ditambahkan.'
+        );
         resetSelectedImage();
+        resetSelectedGallery();
         setModalOpen(false);
-        fetchData();
+        await fetchData();
       }
     } catch (error) {
       showToast(error.message || 'Gagal mengunggah gambar.', 'error');
@@ -460,7 +613,7 @@ export default function AdminDokumentasi() {
                     {item.kategori?.nama || 'Tanpa Kategori'}
                   </span>
                   <button onClick={() => setFotoPostingId(item.id)} className="rounded-lg border border-[#f0cc5a] bg-[#fffbeb] px-3 py-1.5 text-xs font-semibold text-[#5e4300] hover:bg-[#fef9c3]">
-                    Foto
+                    Kelola Foto
                   </button>
                   {item.tanggal_terbit && <span className="text-xs text-[#9f8e78] sm:ml-auto">{item.tanggal_terbit}</span>}
                   <span className="text-xs text-[#b0a08a]">Urutan: {item.urutan_tampil}</span>
@@ -524,8 +677,50 @@ export default function AdminDokumentasi() {
             <FormField label="Urutan">
               <input type="number" className={inputClass} value={form.urutan_tampil} onChange={(e) => setForm((f) => ({ ...f, urutan_tampil: e.target.value }))} />
             </FormField>
+            <div className="rounded-2xl border border-[#f0cc5a] bg-[#fffbeb] p-4">
+              <p className="text-sm font-bold text-[#5e4300]">Galeri Foto Dokumentasi</p>
+              <p className="mt-3 text-sm text-[#7a6e5a]">
+                Pilih banyak foto galeri langsung dari form ini. Semua foto akan ikut tersimpan saat Anda klik simpan.
+              </p>
+              <div className="mt-4 space-y-4">
+                <ImageUploadField
+                  label="Foto Galeri"
+                  folder="dokumentasi/foto"
+                  selectedFiles={selectedGalleryFiles}
+                  previewUrls={galleryPreviewUrls}
+                  onFileChange={handleGalleryImageChange}
+                  onClear={resetSelectedGallery}
+                  multiple
+                />
+                <FormField label="Teks Alt Foto Galeri">
+                  <input
+                    className={inputClass}
+                    placeholder="Opsional. Jika kosong, nama file akan dipakai."
+                    value={galleryAltText}
+                    onChange={(e) => setGalleryAltText(e.target.value)}
+                  />
+                </FormField>
+                <FormField label="Urutan Awal Foto Galeri">
+                  <input
+                    type="number"
+                    className={inputClass}
+                    value={galleryStartOrder}
+                    onChange={(e) => setGalleryStartOrder(Number(e.target.value))}
+                  />
+                </FormField>
+                {editItem && (
+                  <button
+                    type="button"
+                    onClick={() => setFotoPostingId(editItem.id)}
+                    className="rounded-xl border border-[#d7c6a7] bg-white px-4 py-2.5 text-sm font-semibold text-[#7a5b0a] hover:bg-[#f7f2e8]"
+                  >
+                    Lihat Foto Yang Sudah Ada
+                  </button>
+                )}
+              </div>
+            </div>
             <div className="flex gap-3 pt-2">
-              <button type="button" onClick={() => { resetSelectedImage(); setModalOpen(false); }} className="flex-1 rounded-xl border border-[#ddd3c2] py-3 text-sm font-semibold text-[#7a6e5a] hover:bg-[#ece8df]">
+              <button type="button" onClick={() => { resetSelectedImage(); resetSelectedGallery(); setModalOpen(false); }} className="flex-1 rounded-xl border border-[#ddd3c2] py-3 text-sm font-semibold text-[#7a6e5a] hover:bg-[#ece8df]">
                 Batal
               </button>
               <button type="submit" disabled={saving || uploadingImage} className="flex-1 rounded-xl bg-[#7a5b0a] py-3 text-sm font-semibold text-white hover:bg-[#684d08] disabled:opacity-50">

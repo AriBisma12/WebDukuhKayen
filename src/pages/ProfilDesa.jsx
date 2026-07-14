@@ -3,25 +3,29 @@ import { Helmet } from 'react-helmet-async';
 import { useLocation } from 'react-router-dom';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
-import { getProfileOfficials, getProfileStats, getVillageBoundaries } from '../lib/siteContent';
+import { siteSectionDefaults } from '../data/site';
+import { getProfileOfficials, getProfileStats, getSiteSectionContent, getVillageBoundaries } from '../lib/siteContent';
 
 export default function ProfilDesa() {
   const location = useLocation();
   const [profileOfficials, setProfileOfficials] = useState([]);
   const [profileStats, setProfileStats] = useState([]);
   const [villageBoundaries, setVillageBoundaries] = useState([]);
+  const [siteSections, setSiteSections] = useState(siteSectionDefaults);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
-      const [officials, stats, boundaries] = await Promise.all([
+      const [officials, stats, boundaries, sections] = await Promise.all([
         getProfileOfficials(),
         getProfileStats(),
         getVillageBoundaries(),
+        getSiteSectionContent(),
       ]);
       setProfileOfficials(officials);
       setProfileStats(stats);
       setVillageBoundaries(boundaries);
+      setSiteSections(sections);
       setLoading(false);
     }
     fetchData();
@@ -73,7 +77,7 @@ export default function ProfilDesa() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
+            src={siteSections.profil_intro?.hero_background_url}
             alt="Panorama padukuhan dan perbukitan"
             className="h-full w-full object-cover"
           />
@@ -131,7 +135,7 @@ export default function ProfilDesa() {
         <div className="relative">
           <div className="overflow-hidden rounded-[2rem] border border-[#ddd1bf] bg-white p-3 shadow-[0_28px_60px_-36px_rgba(52,37,13,0.82)]">
             <img
-              src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80"
+              src={siteSections.profil_intro?.history_image_url}
               alt="Dokumentasi sejarah dan pertemuan warga padukuhan"
               className="h-[320px] w-full rounded-[1.5rem] object-cover sm:h-[420px] lg:h-[560px]"
             />
@@ -191,7 +195,7 @@ export default function ProfilDesa() {
         <div className="relative order-2 lg:order-1">
           <div className="overflow-hidden rounded-[2rem] border border-[#ddd1bf] bg-[#f0ece4] shadow-[0_28px_60px_-36px_rgba(52,37,13,0.82)]">
             <img
-              src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80"
+              src={siteSections.profil_region?.image_url}
               alt="Peta wilayah dan area pertanian padukuhan"
               className="h-[320px] w-full object-cover opacity-90 sm:h-[420px] lg:h-[520px]"
             />

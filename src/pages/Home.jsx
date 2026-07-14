@@ -3,12 +3,13 @@ import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
-import { missionPoints } from '../data/site';
-import { getVillageNews, getVillageStats } from '../lib/siteContent';
+import { missionPoints, siteSectionDefaults } from '../data/site';
+import { getSiteSectionContent, getVillageNews, getVillageStats } from '../lib/siteContent';
 
 export default function Home() {
   const [villageNews, setVillageNews] = useState([]);
   const [villageStats, setVillageStats] = useState([]);
+  const [siteSections, setSiteSections] = useState(siteSectionDefaults);
   const [loading, setLoading] = useState(true);
 
   const handleContactScroll = () => {
@@ -20,12 +21,14 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const [news, stats] = await Promise.all([
+      const [news, stats, sections] = await Promise.all([
         getVillageNews(),
         getVillageStats(),
+        getSiteSectionContent(),
       ]);
       setVillageNews(news);
       setVillageStats(stats);
+      setSiteSections(sections);
       setLoading(false);
     }
     fetchData();
@@ -46,7 +49,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80"
+            src={siteSections.home_hero?.background_url}
             alt="Pemandangan sawah bertingkat padukuhan"
             className="h-full w-full object-cover"
           />
@@ -118,7 +121,7 @@ export default function Home() {
         <div className="relative">
           <div className="overflow-hidden rounded-[2rem] border border-[#dccfb8] bg-white p-3 shadow-[0_28px_60px_-36px_rgba(50,34,11,0.8)]">
             <img
-              src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1200&q=80"
+              src={siteSections.home_vision?.image_url}
               alt="Pertemuan warga di balai padukuhan"
               className="h-[320px] w-full rounded-[1.4rem] object-cover sm:h-[420px] lg:h-[520px]"
             />

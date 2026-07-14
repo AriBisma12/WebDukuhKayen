@@ -100,6 +100,15 @@ create table if not exists public.batas_wilayah_desa (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.pengaturan_tampilan (
+  id uuid primary key default gen_random_uuid(),
+  setting_key text not null unique,
+  label text not null,
+  content jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create or replace function public.set_updated_at()
 returns trigger
 language plpgsql
@@ -160,6 +169,11 @@ create trigger set_batas_wilayah_desa_updated_at
 before update on public.batas_wilayah_desa
 for each row execute function public.set_updated_at();
 
+drop trigger if exists set_pengaturan_tampilan_updated_at on public.pengaturan_tampilan;
+create trigger set_pengaturan_tampilan_updated_at
+before update on public.pengaturan_tampilan
+for each row execute function public.set_updated_at();
+
 alter table public.tautan_navigasi enable row level security;
 alter table public.berita_desa enable row level security;
 alter table public.statistik_desa enable row level security;
@@ -170,6 +184,7 @@ alter table public.video_dokumentasi enable row level security;
 alter table public.statistik_profil enable row level security;
 alter table public.aparatur_desa enable row level security;
 alter table public.batas_wilayah_desa enable row level security;
+alter table public.pengaturan_tampilan enable row level security;
 
 drop policy if exists "Public read tautan_navigasi" on public.tautan_navigasi;
 create policy "Public read tautan_navigasi"
@@ -230,3 +245,16 @@ create policy "Public read batas_wilayah_desa"
 on public.batas_wilayah_desa for select
 to anon, authenticated
 using (true);
+
+drop policy if exists "Public read pengaturan_tampilan" on public.pengaturan_tampilan;
+create policy "Public read pengaturan_tampilan"
+on public.pengaturan_tampilan for select
+to anon, authenticated
+using (true);
+
+drop policy if exists "Authenticated manage pengaturan_tampilan" on public.pengaturan_tampilan;
+create policy "Authenticated manage pengaturan_tampilan"
+on public.pengaturan_tampilan for all
+to authenticated
+using (true)
+with check (true);

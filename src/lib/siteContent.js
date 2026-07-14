@@ -9,6 +9,7 @@ import {
   profileStats as fallbackProfileStats,
   profileOfficials as fallbackProfileOfficials,
   villageBoundaries as fallbackVillageBoundaries,
+  siteSectionDefaults,
 } from '../data/site';
 
 function formatIndonesianDate(value) {
@@ -138,4 +139,24 @@ export async function getVillageBoundaries() {
     .order('urutan_tampil', { ascending: true });
   if (error || !data?.length) return fallbackVillageBoundaries;
   return data.map((item) => ({ direction: item.arah, description: item.deskripsi }));
+}
+
+export async function getSiteSectionContent() {
+  const { data, error } = await supabase
+    .from('pengaturan_tampilan')
+    .select('setting_key, content');
+
+  if (error || !data?.length) return siteSectionDefaults;
+
+  const merged = { ...siteSectionDefaults };
+
+  data.forEach((item) => {
+    if (!item?.setting_key) return;
+    merged[item.setting_key] = {
+      ...(siteSectionDefaults[item.setting_key] || {}),
+      ...(item.content || {}),
+    };
+  });
+
+  return merged;
 }

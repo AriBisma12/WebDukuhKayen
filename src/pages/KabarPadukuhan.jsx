@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
-import { getVillageNews } from '../lib/siteContent';
+import { siteSectionDefaults } from '../data/site';
+import { getSiteSectionContent, getVillageNews } from '../lib/siteContent';
 
 function NewsModal({ post, onClose }) {
   useEffect(() => {
@@ -64,9 +65,19 @@ export default function KabarPadukuhan() {
   const [loading, setLoading] = useState(true);
   const [selectedPost, setSelectedPost] = useState(null);
   const [activeCategory, setActiveCategory] = useState('Semua');
+  const [siteSections, setSiteSections] = useState(siteSectionDefaults);
 
   useEffect(() => {
-    getVillageNews().then((data) => { setPosts(data); setLoading(false); });
+    async function fetchData() {
+      const [news, sections] = await Promise.all([
+        getVillageNews(),
+        getSiteSectionContent(),
+      ]);
+      setPosts(news);
+      setSiteSections(sections);
+      setLoading(false);
+    }
+    fetchData();
   }, []);
 
   const categories = ['Semua', ...new Set(posts.map((p) => p.category))];
@@ -82,7 +93,7 @@ export default function KabarPadukuhan() {
 
       <section className="relative overflow-hidden">
         <div className="absolute inset-0">
-          <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80" alt="Pemandangan padukuhan" className="h-full w-full object-cover" />
+          <img src={siteSections.kabar_hero?.background_url} alt="Pemandangan padukuhan" className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,_rgba(42,30,8,0.18),_rgba(42,30,8,0.66))]" />
         </div>
         <div className="relative mx-auto flex min-h-[380px] max-w-7xl items-center justify-center px-6 py-16 text-center md:px-8">
